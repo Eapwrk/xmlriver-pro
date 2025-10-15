@@ -283,7 +283,9 @@ class BaseClient:
             "daily_limits": DAILY_LIMITS,
             "recommendations": {
                 "timeout": "Используйте таймаут 60 секунд для надежности",
-                "concurrent_requests": f"Максимум {MAX_CONCURRENT_STREAMS} одновременных запросов",
+                "concurrent_requests": (
+                    f"Максимум {MAX_CONCURRENT_STREAMS} одновременных запросов"
+                ),
                 "daily_volume": "Соблюдайте дневные лимиты для избежания блокировки",
                 "error_handling": "Обрабатывайте ошибки 110, 111, 115 как временные",
             },

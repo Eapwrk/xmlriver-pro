@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xmlriver-pro"
-version = "1.0.2"
+version = "1.1.1"
 authors = [
     {name = "XMLRiver Pro Team", email = "seo@controlseo.ru"}
 ]
@@ -32,6 +32,7 @@ keywords = [
 dependencies = [
     "requests>=2.31.0",
     "xmltodict>=0.13.0",
+    "aiohttp>=3.8.0",
 ]
 
 [project.optional-dependencies]
@@ -84,7 +85,7 @@ disable = [
 ]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "1.1.1"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -115,4 +116,5 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "asyncio: marks tests as asyncio tests",
 ]

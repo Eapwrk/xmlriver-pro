@@ -2,7 +2,7 @@
 Валидаторы для XMLRiver Pro API
 """
 
-from typing import Union, Any
+from typing import Union
 from urllib.parse import urlparse
 from ..core.types import DeviceType, OSType, Coords
 

@@ -18,6 +18,8 @@ Python библиотека для работы с API xmlriver.com. Расши�
 - 🗺️ Поиск по картам с координатами
 - 📢 Рекламные блоки (верхние и нижние)
 - 🧩 Специальные блоки (OneBox, Knowledge Graph)
+- ⚡ **Асинхронная поддержка** с aiohttp
+- 🔄 **Параллельные запросы** с asyncio
 
 ## 🏗️ Особенности
 
@@ -26,6 +28,8 @@ Python библиотека для работы с API xmlriver.com. Расши�
 - 🧪 66 тестов с покрытием 57%
 - ⚠️ Специализированные исключения
 - ✔️ Валидация параметров
+- ⚡ **Синхронные и асинхронные клиенты**
+- 🔄 **Поддержка многопоточности и параллелизма**
 
 ## 📦 Установка
 
@@ -118,6 +122,79 @@ yandex_results = yandex.search("программирование на python")
 # Результаты поиска
 google_count = google_results.total_results
 yandex_count = yandex_results.total_results
+```
+
+## ⚡ Асинхронное использование
+
+### Базовый асинхронный поиск
+
+```python
+import asyncio
+from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
+
+async def main():
+    # Google поиск
+    async with AsyncGoogleClient(user_id=123, api_key="your_google_key") as google:
+        results = await google.search("python programming")
+        print(f"Google: {results.total_results} результатов")
+    
+    # Yandex поиск
+    async with AsyncYandexClient(user_id=123, api_key="your_yandex_key") as yandex:
+        results = await yandex.search("программирование на python")
+        print(f"Yandex: {results.total_results} результатов")
+
+# Запуск
+asyncio.run(main())
+```
+
+### Параллельные запросы
+
+```python
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
+
+async def parallel_search():
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        # Создаем задачи для параллельного выполнения
+        tasks = [
+            google.search("python programming"),
+            google.search("machine learning"),
+            google.search("data science")
+        ]
+        
+        # Выполняем все задачи параллельно
+        results = await asyncio.gather(*tasks)
+        
+        for i, result in enumerate(results):
+            print(f"Запрос {i+1}: {result.total_results} результатов")
+
+asyncio.run(parallel_search())
+```
+
+### Смешанный поиск Google + Yandex
+
+```python
+import asyncio
+from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
+
+async def mixed_search():
+    query = "программирование на python"
+    
+    async with AsyncGoogleClient(user_id=123, api_key="google_key") as google, \
+             AsyncYandexClient(user_id=123, api_key="yandex_key") as yandex:
+        
+        # Поиск в обеих системах параллельно
+        google_task = google.search(query)
+        yandex_task = yandex.search(query)
+        
+        google_results, yandex_results = await asyncio.gather(
+            google_task, yandex_task
+        )
+        
+        print(f"Google: {google_results.total_results} результатов")
+        print(f"Yandex: {yandex_results.total_results} результатов")
+
+asyncio.run(mixed_search())
 ```
 
 ### 📰 Поиск по новостям

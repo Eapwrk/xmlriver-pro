@@ -14,7 +14,7 @@ def read_readme():
 
 setup(
     name="xmlriver-pro",
-    version="1.0.2",
+    version="1.1.1",
     author="XMLRiver Pro Team",
     author_email="support@xmlriver.com",
     description="Professional Python client for XMLRiver API with full coverage",
@@ -45,6 +45,7 @@ setup(
     install_requires=[
         "requests>=2.31.0",
         "xmltodict>=0.13.0",
+        "aiohttp>=3.8.0",
     ],
     extras_require={
         "dev": [

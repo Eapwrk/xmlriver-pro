@@ -30,17 +30,21 @@ def format_search_result(
         Отформатированный словарь
     """
     return {
-        "rank": result.rank,
+        "rank": result.rank if hasattr(result, "rank") else None,
         "url": result.url,
         "title": result.title,
-        "snippet": result.snippet,
-        "breadcrumbs": result.breadcrumbs,
-        "content_type": result.content_type,
-        "pub_date": result.pub_date,
-        "extended_passage": result.extended_passage,
-        "stars": result.stars,
-        "sitelinks": result.sitelinks,
-        "turbo_link": result.turbo_link,
+        "snippet": result.snippet if hasattr(result, "snippet") else "",
+        "breadcrumbs": result.breadcrumbs if hasattr(result, "breadcrumbs") else None,
+        "content_type": (
+            result.content_type if hasattr(result, "content_type") else None
+        ),
+        "pub_date": result.pub_date if hasattr(result, "pub_date") else None,
+        "extended_passage": (
+            result.extended_passage if hasattr(result, "extended_passage") else None
+        ),
+        "stars": result.stars if hasattr(result, "stars") else None,
+        "sitelinks": result.sitelinks if hasattr(result, "sitelinks") else None,
+        "turbo_link": result.turbo_link if hasattr(result, "turbo_link") else None,
     }
 
 

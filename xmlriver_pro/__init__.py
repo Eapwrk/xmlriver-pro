@@ -4,34 +4,8 @@ XMLRiver Pro - Professional Python client for XMLRiver API
 Полнофункциональная Python библиотека для работы с API xmlriver.com
 с поддержкой всех типов поиска Google и Yandex.
 
-Version: 1.0.2
+Version: 1.1.1
 """
-
-__version__ = "1.0.2"
-
-"""
-Основные возможности:
-- Органический поиск Google и Yandex
-- Поиск по новостям, изображениям, картам
-- Рекламные блоки
-- Специальные блоки (OneBox, колдунщики)
-- Полная типизация
-- Современная архитектура
-- Comprehensive тесты
-
-Пример использования:
-    from xmlriver_pro import GoogleClient, YandexClient
-
-    # Google поиск
-    google = GoogleClient(user_id=123, api_key="your_key")
-    results = google.search("python programming")
-
-    # Yandex поиск
-    yandex = YandexClient(user_id=123, api_key="your_key")
-    results = yandex.search("программирование на python")
-"""
-__author__ = "XMLRiver Pro Team"
-__email__ = "support@xmlriver.com"
 
 # Импорт основных клиентов
 from .google import (
@@ -50,6 +24,10 @@ from .yandex import (
     YandexAds,
     YandexSpecialBlocks,
 )
+
+# Импорт асинхронных клиентов
+from .google.async_client import AsyncGoogleClient
+from .yandex.async_client import AsyncYandexClient
 
 # Импорт типов и исключений
 from .core import (
@@ -96,6 +74,33 @@ from .utils import (
     format_map_result,
 )
 
+# Версия и метаданные
+__version__ = "1.1.1"
+__author__ = "XMLRiver Pro Team"
+__email__ = "support@xmlriver.com"
+
+"""
+Основные возможности:
+- Органический поиск Google и Yandex
+- Поиск по новостям, изображениям, картам
+- Рекламные блоки
+- Специальные блоки (OneBox, колдунщики)
+- Полная типизация
+- Современная архитектура
+- Comprehensive тесты
+
+Пример использования:
+    from xmlriver_pro import GoogleClient, YandexClient
+
+    # Google поиск
+    google = GoogleClient(user_id=123, api_key="your_key")
+    results = google.search("python programming")
+
+    # Yandex поиск
+    yandex = YandexClient(user_id=123, api_key="your_key")
+    results = yandex.search("программирование на python")
+"""
+
 __all__ = [
     # Версия
     "__version__",
@@ -115,6 +120,9 @@ __all__ = [
     "YandexNews",
     "YandexAds",
     "YandexSpecialBlocks",
+    # Асинхронные клиенты
+    "AsyncGoogleClient",
+    "AsyncYandexClient",
     # Типы
     "SearchType",
     "TimeFilter",
