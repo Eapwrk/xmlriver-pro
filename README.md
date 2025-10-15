@@ -53,8 +53,9 @@ yandex = YandexClient(user_id=123, api_key="your_yandex_key")
 google_results = google.search("python programming")
 yandex_results = yandex.search("программирование на python")
 
-print(f"Google: {google_results.total_results} результатов")
-print(f"Yandex: {yandex_results.total_results} результатов")
+# Результаты поиска
+google_count = google_results.total_results
+yandex_count = yandex_results.total_results
 ```
 
 ### 📰 Поиск по новостям
@@ -63,11 +64,9 @@ print(f"Yandex: {yandex_results.total_results} результатов")
 from xmlriver_pro import GoogleNews, YandexNews
 from xmlriver_pro.core.types import TimeFilter
 
-# Google новости
 google_news = GoogleNews(user_id=123, api_key="your_key")
 news_results = google_news.search_news("python", time_filter=TimeFilter.LAST_WEEK)
 
-# Yandex новости
 yandex_news = YandexNews(user_id=123, api_key="your_key")
 yandex_news_results = yandex_news.search_news_last_day("python новости")
 ```
@@ -79,10 +78,7 @@ from xmlriver_pro import GoogleImages
 
 images = GoogleImages(user_id=123, api_key="your_key")
 
-# Поиск изображений
 image_results = images.search_images("python logo", count=20)
-
-# Поиск с фильтрами
 large_images = images.search_images_by_size("python logo", "large")
 color_images = images.search_images_by_color("python logo", "blue")
 ```
@@ -94,14 +90,12 @@ from xmlriver_pro import GoogleMaps
 
 maps = GoogleMaps(user_id=123, api_key="your_key")
 
-# Поиск по картам
 map_results = maps.search_maps(
     query="кафе Москва",
     zoom=12,
     coords=(55.7558, 37.6176)
 )
 
-# Поиск поблизости
 nearby_cafes = maps.search_nearby("кафе", coords=(55.7558, 37.6176), radius=1000)
 ```
 
@@ -110,14 +104,9 @@ nearby_cafes = maps.search_nearby("кафе", coords=(55.7558, 37.6176), radius=
 ```python
 from xmlriver_pro import GoogleAds, YandexAds
 
-# Google реклама
 google_ads = GoogleAds(user_id=123, api_key="your_key")
 ads_response = google_ads.get_ads("python programming")
 
-print(f"Верхние рекламные блоки: {len(ads_response.top_ads)}")
-print(f"Нижние рекламные блоки: {len(ads_response.bottom_ads)}")
-
-# Yandex реклама
 yandex_ads = YandexAds(user_id=123, api_key="your_key")
 yandex_ads_response = yandex_ads.get_ads("программирование python")
 ```
@@ -159,15 +148,15 @@ from xmlriver_pro.utils import validate_coords, validate_zoom, validate_url
 # Валидация координат
 coords = (55.7558, 37.6176)
 if validate_coords(coords):
-    print("Координаты валидны")
+    # Координаты валидны
 
 # Валидация zoom
 if validate_zoom(12):
-    print("Zoom валиден")
+    # Zoom валиден
 
 # Валидация URL
 if validate_url("https://python.org"):
-    print("URL валиден")
+    # URL валиден
 ```
 
 ### 📝 Форматирование результатов
@@ -193,15 +182,20 @@ from xmlriver_pro.core import (
 try:
     results = google.search("python")
 except AuthenticationError as e:
-    print(f"Ошибка аутентификации: {e}")
+    # Обработка ошибки аутентификации
+    logger.error(f"Authentication failed: {e}")
 except RateLimitError as e:
-    print(f"Превышен лимит запросов: {e}")
+    # Превышен лимит запросов
+    logger.warning(f"Rate limit exceeded: {e}")
 except NoResultsError as e:
-    print(f"Нет результатов: {e}")
+    # Нет результатов поиска
+    logger.info(f"No results found: {e}")
 except NetworkError as e:
-    print(f"Ошибка сети: {e}")
+    # Ошибка сети
+    logger.error(f"Network error: {e}")
 except ValidationError as e:
-    print(f"Ошибка валидации: {e}")
+    # Ошибка валидации параметров
+    logger.error(f"Validation error: {e}")
 ```
 
 ## 📊 Статистика и мониторинг
@@ -209,21 +203,16 @@ except ValidationError as e:
 ```python
 # Получение баланса
 balance = google.get_balance()
-print(f"Баланс: {balance} руб.")
 
 # Получение стоимости
 google_cost = google.get_cost()
 yandex_cost = yandex.get_cost()
-print(f"Google: {google_cost} руб./1000 запросов")
-print(f"Yandex: {yandex_cost} руб./1000 запросов")
 
 # Проверка индексации
 is_indexed = google.check_indexing("https://python.org")
-print(f"URL проиндексирован: {is_indexed}")
 
 # Проверка доверия к домену
 is_trusted = google.is_trust_domain("python.org")
-print(f"Домен доверенный: {is_trusted}")
 ```
 
 ## 🧪 Тестирование
