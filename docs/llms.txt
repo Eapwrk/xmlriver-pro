@@ -1,0 +1,64 @@
+# XMLRiver Pro Documentation
+
+## Overview
+XMLRiver Pro is a professional Python client for XMLRiver API with full coverage of Google and Yandex search capabilities.
+
+## Key Features
+- Organic search for Google and Yandex
+- News, images, maps search
+- Ad blocks and special blocks (OneBox, knowledge graph)
+- Full type hints and modern architecture
+- Comprehensive error handling
+- 66 tests with 58% coverage
+
+## Installation
+```bash
+# From GitHub (recommended)
+pip install git+https://github.com/Eapwrk/xmlriver-pro.git
+
+# Specific version
+pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v1.0.2
+
+# Check version
+python -c "import xmlriver_pro; print(xmlriver_pro.__version__)"
+```
+
+## Versioning System
+- Centralized versioning with `__version__` in `__init__.py`
+- Synchronized across `pyproject.toml`, `setup.py`, `__init__.py`
+- `CHANGELOG.md` with full release history
+- `update_version.py` script for version management
+- `create_release.py` script for automated releases
+- GitHub Actions for automatic releases
+- GitHub Releases work out of the box, PyPI optional
+
+## Updates
+- Watch repository on GitHub for notifications
+- Email: seo@controlseo.ru
+- GitHub Issues and Discussions available
+- Check current version: `python -c "import xmlriver_pro; print(xmlriver_pro.__version__)"`
+
+## API Limits
+- Max concurrent streams: 10 for each system (Google, Yandex, Wordstat)
+- Daily limits: Google ~200k, Yandex ~150k requests
+- Response time: 3-6 seconds (usually), max 60 seconds
+- Recommended timeout: 60 seconds
+
+## Error Handling
+Comprehensive error handling with specific exception types:
+- AuthenticationError (codes 31, 42, 45)
+- RateLimitError (codes 110, 111, 115)
+- NoResultsError (code 15)
+- NetworkError (codes 500, 202)
+- ValidationError (codes 2, 102-108, 120, 121)
+- InsufficientFundsError (code 200)
+- ServiceUnavailableError (codes 101, 201)
+
+## Examples
+See `examples.md` for comprehensive usage examples including:
+- Basic search queries
+- Advanced search with filters
+- Error handling
+- Mass search operations
+- Position monitoring
+- Competitor analysis
