@@ -4,6 +4,11 @@ XMLRiver Pro - Professional Python client for XMLRiver API
 Полнофункциональная Python библиотека для работы с API xmlriver.com
 с поддержкой всех типов поиска Google и Yandex.
 
+Version: 1.0.1
+"""
+
+__version__ = "1.0.1"
+
 Основные возможности:
 - Органический поиск Google и Yandex
 - Поиск по новостям, изображениям, картам
@@ -25,7 +30,7 @@ XMLRiver Pro - Professional Python client for XMLRiver API
     results = yandex.search("программирование на python")
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "XMLRiver Pro Team"
 __email__ = "support@xmlriver.com"
 

@@ -169,3 +169,34 @@ fixtures/
 # Official documentation (downloaded)
 docs/official/
 download_docs.py
+
+# Version management scripts (temporary)
+update_version.py
+create_release.py
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
