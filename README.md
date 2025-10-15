@@ -39,19 +39,19 @@ Python библиотека для работы с API xmlriver.com. Расши�
 pip install git+https://github.com/Eapwrk/xmlriver-pro.git
 
 # Установка конкретной версии
-pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v1.0.1
+pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v1.1.1
 
 # Обновление до последней версии
 pip install --upgrade git+https://github.com/Eapwrk/xmlriver-pro.git
 ```
 
-### 📦 **Из PyPI (если доступно):**
+### 📦 **Из PyPI:**
 ```bash
 # Установка последней версии
 pip install xmlriver-pro
 
 # Установка конкретной версии
-pip install xmlriver-pro==1.0.1
+pip install xmlriver-pro==1.1.1
 
 # Обновление до последней версии
 pip install --upgrade xmlriver-pro

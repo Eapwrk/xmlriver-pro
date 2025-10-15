@@ -4,7 +4,7 @@
 
 XMLRiver Pro uses centralized versioning system:
 
-- **Version location**: `__version__ = "1.0.2"` in `xmlriver_pro/__init__.py`
+- **Version location**: `__version__ = "1.1.1"` in `xmlriver_pro/__init__.py`
 - **Synchronized files**: `pyproject.toml`, `setup.py`, `__init__.py`
 - **History**: `CHANGELOG.md` with full release history
 - **Format**: Semantic Versioning (MAJOR.MINOR.PATCH)

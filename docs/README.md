@@ -37,7 +37,7 @@ print(f"Found: {results.total_results} results")
 
 ## Version Management
 
-- **Current version**: 1.0.2
+- **Current version**: 1.1.1
 - **Versioning**: Semantic (MAJOR.MINOR.PATCH)
 - **Updates**: Watch repository or check email
 - **Scripts**: `update_version.py`, `create_release.py`
