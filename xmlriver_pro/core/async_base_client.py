@@ -222,17 +222,35 @@ class AsyncBaseClient:
                 raise APIError(error_code, error_message)
 
             # Создаем SearchResponse
-            # Извлекаем total из response.found для Yandex API
+            # Извлекаем total из response.found для Google/Yandex API
             total_results = 0
             if "response" in response_data and "found" in response_data["response"]:
-                total_results = int(response_data["response"]["found"].get("#text", 0))
+                found_data = response_data["response"]["found"]
+                if isinstance(found_data, dict) and "#text" in found_data:
+                    total_results = int(found_data["#text"])
+                else:
+                    total_results = int(found_data)
             elif "total" in response_data:
                 total_results = int(response_data["total"])
-            
+
+            # Извлекаем дополнительные поля для исправлений и подсказок
+            showing_results_for = None
+            correct = None
+            fixtype = None
+
+            if "response" in response_data:
+                response_obj = response_data["response"]
+                showing_results_for = response_obj.get("showing_results_for")
+                correct = response_obj.get("correct")
+                fixtype = response_obj.get("fixtype")
+
             return SearchResponse(
                 query=response_data.get("query", query),
                 total_results=total_results,
                 results=self._extract_results(response_data, search_type),
+                showing_results_for=showing_results_for,
+                correct=correct,
+                fixtype=fixtype,
             )
 
         except Exception as e:

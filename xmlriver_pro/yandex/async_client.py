@@ -196,7 +196,10 @@ class AsyncYandexClient(AsyncBaseClient):
         # Извлекаем основные результаты из Yandex API структуры
         if "response" in data and "results" in data["response"]:
             response_data = data["response"]
-            if "grouping" in response_data["results"] and "group" in response_data["results"]["grouping"]:
+            if (
+                "grouping" in response_data["results"]
+                and "group" in response_data["results"]["grouping"]
+            ):
                 groups = response_data["results"]["grouping"]["group"]
                 if not isinstance(groups, list):
                     groups = [groups]
@@ -269,7 +272,7 @@ class AsyncYandexClient(AsyncBaseClient):
                     snippet = " ".join(passages)
                 else:
                     snippet = str(passages)
-            
+
             if search_type == "news":
                 return NewsResult(
                     rank=int(item.get("position", 0)),
