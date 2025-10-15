@@ -1,35 +1,94 @@
 # XMLRiver Pro
 
+<div align="center">
+
+[![GitHub stars](https://img.shields.io/github/stars/Eapwrk/xmlriver-pro?style=social)](https://github.com/Eapwrk/xmlriver-pro)
+[![Star this repo](https://img.shields.io/badge/⭐-Star%20this%20repo-yellow?style=social)](https://github.com/Eapwrk/xmlriver-pro)
+[![Fork this repo](https://img.shields.io/badge/🍴-Fork%20this%20repo-blue?style=social)](https://github.com/Eapwrk/xmlriver-pro/fork)
+[![Watch this repo](https://img.shields.io/badge/👁-Watch%20this%20repo-green?style=social)](https://github.com/Eapwrk/xmlriver-pro/subscription)
+[![Sponsor this repo](https://img.shields.io/badge/💖-Sponsor%20this%20repo-pink?style=social)](https://github.com/sponsors/Eapwrk)
+[![Report Issues](https://img.shields.io/badge/🐛-Report%20Issues-red?style=social)](https://github.com/Eapwrk/xmlriver-pro/issues)
+[![Join Discussions](https://img.shields.io/badge/💬-Join%20Discussions-purple?style=social)](https://github.com/Eapwrk/xmlriver-pro/discussions)
+[![Pull Requests](https://img.shields.io/badge/🔀-Pull%20Requests-orange?style=social)](https://github.com/Eapwrk/xmlriver-pro/pulls)
+[![Wiki](https://img.shields.io/badge/📚-Wiki-teal?style=social)](https://github.com/Eapwrk/xmlriver-pro/wiki)
+[![Actions](https://img.shields.io/badge/⚙️-Actions-gray?style=social)](https://github.com/Eapwrk/xmlriver-pro/actions)
+[![Releases](https://img.shields.io/badge/🚀-Releases-cyan?style=social)](https://github.com/Eapwrk/xmlriver-pro/releases)
+[![Security](https://img.shields.io/badge/🔒-Security-indigo?style=social)](https://github.com/Eapwrk/xmlriver-pro/security)
+[![Insights](https://img.shields.io/badge/📊-Insights-lime?style=social)](https://github.com/Eapwrk/xmlriver-pro/pulse)
+[![Settings](https://img.shields.io/badge/⚙️-Settings-slate?style=social)](https://github.com/Eapwrk/xmlriver-pro/settings)
+[![Code](https://img.shields.io/badge/💻-Code-emerald?style=social)](https://github.com/Eapwrk/xmlriver-pro)
+[![Issues](https://img.shields.io/badge/🐛-Issues-red?style=social)](https://github.com/Eapwrk/xmlriver-pro/issues)
+[![Pull Requests](https://img.shields.io/badge/🔀-Pull%20Requests-orange?style=social)](https://github.com/Eapwrk/xmlriver-pro/pulls)
+[![Discussions](https://img.shields.io/badge/💬-Discussions-purple?style=social)](https://github.com/Eapwrk/xmlriver-pro/discussions)
+[![Wiki](https://img.shields.io/badge/📚-Wiki-teal?style=social)](https://github.com/Eapwrk/xmlriver-pro/wiki)
+[![Actions](https://img.shields.io/badge/⚙️-Actions-gray?style=social)](https://github.com/Eapwrk/xmlriver-pro/actions)
+[![PyPI version](https://img.shields.io/pypi/v/xmlriver-pro?color=blue)](https://pypi.org/project/xmlriver-pro/)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/xmlriver-pro?color=orange)](https://pypi.org/project/xmlriver-pro/)
 [![Coverage](https://img.shields.io/badge/coverage-57%25-brightgreen.svg)](https://github.com/Eapwrk/xmlriver-pro)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Eapwrk/xmlriver-pro?color=blue)](https://github.com/Eapwrk/xmlriver-pro)
+[![GitHub issues](https://img.shields.io/github/issues/Eapwrk/xmlriver-pro?color=red)](https://github.com/Eapwrk/xmlriver-pro/issues)
 
-> Fork of [KursHub-ru/xmlriver](https://github.com/KursHub-ru/xmlriver)
+```
+██╗  ██╗███╗   ███╗██╗     ██████╗ ██╗   ██╗███████╗███████╗██████╗ 
+╚██╗██╔╝████╗ ████║██║     ██╔══██╗██║   ██║██╔════╝██╔════╝██╔══██╗
+ ╚███╔╝ ██╔████╔██║██║     ██████╔╝██║   ██║█████╗  █████╗  ██████╔╝
+ ██╔██╗ ██║╚██╔╝██║██║     ██╔══██╗██║   ██║██╔══╝  ██╔══╝  ██╔══██╗
+██╔╝ ██╗██║ ╚═╝ ██║███████╗██████╔╝╚██████╔╝███████╗███████╗██║  ██║
+╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝
+```
 
-Python библиотека для работы с API xmlriver.com. Расширенная версия с поддержкой всех типов поиска.
+**Professional Python client for XMLRiver API with full coverage**
 
-Поддерживает все типы поиска в Google и Yandex: органический поиск, новости, изображения, карты, реклама и специальные блоки.
+*Fork of [KursHub-ru/xmlriver](https://github.com/KursHub-ru/xmlriver)*
 
-## ✨ Что умеет
+[![🚀 Quick Start](#-быстрый-старт)](#-быстрый-старт) • [![📚 Documentation](#-документация)](#-документация) • [![🔧 Configuration](#-конфигурация)](#-конфигурация) • [![💡 Examples](#-примеры-использования)](#-примеры-использования)
 
-- 🔍 Органический поиск в Google и Yandex
-- 📰 Поиск по новостям с фильтрами времени
-- 🖼️ Поиск по изображениям (размер, цвет, тип)
-- 🗺️ Поиск по картам с координатами
-- 📢 Рекламные блоки (верхние и нижние)
+</div>
+
+---
+
+## 🎯 О проекте
+
+XMLRiver Pro — это **профессиональная** Python библиотека для работы с API xmlriver.com. Расширенная версия с поддержкой **всех типов поиска** в Google и Yandex.
+
+### 📊 Сравнение с оригинальной библиотекой
+
+| Функция | Оригинал | **XMLRiver Pro** |
+|---------|----------|------------------|
+| 🔍 Органический поиск | ✅ | ✅ **Улучшенный** |
+| 📰 Новости | ✅ | ✅ **С фильтрами времени** |
+| 🖼️ Изображения | ✅ | ✅ **Расширенные параметры** |
+| 🗺️ Карты | ✅ | ✅ **С координатами** |
+| 📢 Реклама | ✅ | ✅ **Верхние и нижние блоки** |
+| 🧩 Специальные блоки | ❌ | ✅ **OneBox, Knowledge Graph** |
+| ⚡ Асинхронность | ❌ | ✅ **Полная поддержка** |
+| 🔄 Retry механизм | ❌ | ✅ **Экспоненциальный backoff** |
+| 🛡️ Ограничение потоков | ❌ | ✅ **Максимум 10 одновременных** |
+| 📊 Типизация | ❌ | ✅ **100% типизирован** |
+| 🧪 Тесты | ❌ | ✅ **66 тестов, 57% покрытие** |
+
+**Поддерживает все типы поиска:**
+- 🔍 Органический поиск
+- 📰 Новости с фильтрами времени  
+- 🖼️ Изображения (размер, цвет, тип)
+- 🗺️ Карты с координатами
+- 📢 Рекламные блоки
 - 🧩 Специальные блоки (OneBox, Knowledge Graph)
-- ⚡ **Асинхронная поддержка** с aiohttp
-- 🔄 **Параллельные запросы** с asyncio
+- ⚡ **Асинхронная поддержка** с ограничением потоков
 
-## 🏗️ Особенности
+## ✨ Ключевые особенности
 
-- ✅ Полная типизация для Python 3.10+
-- 🏛️ Модульная архитектура
-- 🧪 66 тестов с покрытием 57%
-- ⚠️ Специализированные исключения
-- ✔️ Валидация параметров
-- ⚡ **Синхронные и асинхронные клиенты**
-- 🔄 **Поддержка многопоточности и параллелизма**
+- ⚡ **Асинхронная поддержка** с ограничением потоков (максимум 10)
+- 🔄 **Retry механизм** с экспоненциальным backoff
+- 🛡️ **Валидация параметров** и обработка ошибок
+- 📊 **Форматирование результатов** поиска
+- 🎯 **100% покрытие API** - все методы XMLRiver
+- 🚀 **Высокая производительность** - оптимизированные запросы
+- ✅ **Полная типизация** для Python 3.10+
+- 🏛️ **Модульная архитектура** с четким разделением
+- 🧪 **66 тестов** с покрытием 57%
 
 ## 📦 Установка
 
@@ -544,4 +603,16 @@ MIT License. Подробности в [LICENSE](LICENSE).
 
 ---
 
-**XMLRiver Pro** - Python клиент для API xmlriver.com
+## 📈 Статистика проекта
+
+<div align="center">
+
+![GitHub stars](https://img.shields.io/github/stars/Eapwrk/xmlriver-pro?style=social&label=Stars)
+![GitHub forks](https://img.shields.io/github/forks/Eapwrk/xmlriver-pro?style=social&label=Forks)
+![GitHub watchers](https://img.shields.io/github/watchers/Eapwrk/xmlriver-pro?style=social&label=Watchers)
+
+**XMLRiver Pro** - Professional Python client for XMLRiver API
+
+*Made with ❤️ by [XMLRiver Pro Team](https://github.com/Eapwrk/xmlriver-pro)*
+
+</div>
