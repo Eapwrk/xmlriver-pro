@@ -51,7 +51,6 @@ docs = [
 
 [project.urls]
 Homepage = "https://xmlriver.com"
-Documentation = "https://xmlriver-pro.readthedocs.io/"
 Repository = "https://github.com/Eapwrk/xmlriver-pro"
 "Bug Reports" = "https://github.com/Eapwrk/xmlriver-pro/issues"
 "Original Repository" = "https://github.com/KursHub-ru/xmlriver"
