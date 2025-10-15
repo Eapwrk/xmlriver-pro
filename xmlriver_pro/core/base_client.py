@@ -62,7 +62,11 @@ class BaseClient:
             logger.setLevel(logging.INFO)
 
     def _make_request(
-        self, url: str, params: Dict[str, Any], max_retries: int = 3, timeout: int = DEFAULT_TIMEOUT
+        self,
+        url: str,
+        params: Dict[str, Any],
+        max_retries: int = 3,
+        timeout: int = DEFAULT_TIMEOUT,
     ) -> Dict[str, Any]:
         """
         Выполнить запрос к API с обработкой ошибок
@@ -79,7 +83,7 @@ class BaseClient:
         Raises:
             XMLRiverError: При ошибках API
             NetworkError: При сетевых ошибках
-            
+
         Note:
             Официальные ограничения XMLRiver:
             - Максимальный таймаут: 60 секунд
@@ -267,7 +271,7 @@ class BaseClient:
     def get_api_limits(self) -> Dict[str, Any]:
         """
         Получить информацию об ограничениях API
-        
+
         Returns:
             Словарь с ограничениями API
         """
@@ -281,8 +285,8 @@ class BaseClient:
                 "timeout": "Используйте таймаут 60 секунд для надежности",
                 "concurrent_requests": f"Максимум {MAX_CONCURRENT_STREAMS} одновременных запросов",
                 "daily_volume": "Соблюдайте дневные лимиты для избежания блокировки",
-                "error_handling": "Обрабатывайте ошибки 110, 111, 115 как временные"
-            }
+                "error_handling": "Обрабатывайте ошибки 110, 111, 115 как временные",
+            },
         }
 
     def check_indexing(self, url: str, strict: bool = False, **kwargs: Any) -> bool:

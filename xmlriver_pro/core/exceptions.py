@@ -51,7 +51,7 @@ ERROR_CODES = {
     2: "Задан пустой поисковый запрос (в элементе query передано пустое значение)",
     15: "Для заданного поискового запроса отсутствуют результаты поиска",
     20: "Внутренняя ошибка. Обратитесь в службу поддержки",
-    21: "Внутренняя ошибка. Обратитесь в службу поддержки", 
+    21: "Внутренняя ошибка. Обратитесь в службу поддержки",
     22: "Внутренняя ошибка. Обратитесь в службу поддержки",
     23: "Внутренняя ошибка. Обратитесь в службу поддержки",
     24: "Внутренняя ошибка. Обратитесь в службу поддержки",
@@ -92,30 +92,30 @@ def raise_xmlriver_error(code: int, message: Optional[str] = None) -> None:
     # Нет результатов поиска
     if code == 15:
         raise NoResultsError(code, message)
-    
+
     # Ошибки аутентификации и доступа
     if code in [31, 42, 45]:
         raise AuthenticationError(code, message)
-    
+
     # Ошибки лимитов и потоков
     if code in [110, 111, 115]:
         raise RateLimitError(code, message)
-    
+
     # Ошибки сети (временные, требуют повтора)
     if code in [500, 202]:
         raise NetworkError(code, message)
-    
+
     # Недостаточно средств
     if code == 200:
         raise InsufficientFundsError(code, message)
-    
+
     # Сервис недоступен
     if code in [101, 201]:
         raise ServiceUnavailableError(code, message)
-    
+
     # Ошибки валидации параметров
     if code in [2, 102, 103, 104, 105, 106, 107, 108, 120, 121]:
         raise ValidationError(code, message)
-    
+
     # Остальные ошибки API
     raise APIError(code, message)

@@ -17,7 +17,9 @@ from ..core.types import (
 )
 
 
-def format_search_result(result: Union[SearchResult, NewsResult, ImageResult, MapResult, AdResult]) -> Dict[str, Any]:
+def format_search_result(
+    result: Union[SearchResult, NewsResult, ImageResult, MapResult, AdResult],
+) -> Dict[str, Any]:
     """
     Форматирование результата поиска
 
@@ -230,7 +232,7 @@ def format_search_stats(response: SearchResponse) -> Dict[str, Any]:
     """
     content_types: Dict[str, int] = {}
     for result in response.results:
-        if hasattr(result, 'content_type'):
+        if hasattr(result, "content_type"):
             content_type = result.content_type
             content_types[content_type] = content_types.get(content_type, 0) + 1
 
