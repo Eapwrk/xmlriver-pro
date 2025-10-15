@@ -9,6 +9,7 @@ Version: 1.0.1
 
 __version__ = "1.0.1"
 
+"""
 Основные возможности:
 - Органический поиск Google и Yandex
 - Поиск по новостям, изображениям, картам
@@ -29,8 +30,6 @@ __version__ = "1.0.1"
     yandex = YandexClient(user_id=123, api_key="your_key")
     results = yandex.search("программирование на python")
 """
-
-__version__ = "1.0.1"
 __author__ = "XMLRiver Pro Team"
 __email__ = "support@xmlriver.com"
 
