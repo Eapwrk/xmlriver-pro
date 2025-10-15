@@ -210,8 +210,13 @@ class AsyncBaseClient:
             root_key = list(data.keys())[0]
             response_data = data[root_key]
 
-            # Проверяем наличие ошибок
-            if "error" in response_data:
+            # Проверяем наличие ошибок в response
+            if "response" in response_data and "error" in response_data["response"]:
+                error_data = response_data["response"]["error"]
+                error_code = int(error_data.get("@code", 999))
+                error_message = error_data.get("#text", "Unknown error")
+                raise APIError(error_code, error_message)
+            elif "error" in response_data:
                 error_code = int(response_data["error"].get("@code", 999))
                 error_message = response_data["error"].get("#text", "Unknown error")
                 raise APIError(error_code, error_message)
