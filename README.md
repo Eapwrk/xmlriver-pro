@@ -257,21 +257,20 @@ pytest tests/test_yandex.py
 pytest -v
 ```
 
-## 📚 Документация
+## Документация
 
-- [Полная документация](https://xmlriver-pro.readthedocs.io/)
-- [API Reference](https://xmlriver-pro.readthedocs.io/api/)
-- [Примеры использования](https://xmlriver-pro.readthedocs.io/examples/)
-- [Руководство по миграции](https://xmlriver-pro.readthedocs.io/migration/)
+- [README.md](README.md) - основная документация
+- [docs/examples.md](docs/examples.md) - примеры использования
+- [Исходный код](https://github.com/Eapwrk/xmlriver-pro) - полный код с комментариями
 
-## 🤝 Вклад в проект
+## Вклад в проект
 
-Мы приветствуем вклад в развитие проекта! Пожалуйста, ознакомьтесь с [руководством по вкладу](CONTRIBUTING.md).
+Приветствуем вклад в развитие! Создавайте Issues и Pull Requests на [GitHub](https://github.com/Eapwrk/xmlriver-pro).
 
 ### Установка для разработки
 
 ```bash
-git clone https://github.com/xmlriver-pro/xmlriver-pro.git
+git clone https://github.com/Eapwrk/xmlriver-pro.git
 cd xmlriver-pro
 pip install -e ".[dev]"
 pre-commit install
