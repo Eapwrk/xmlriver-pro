@@ -143,6 +143,7 @@ client = GoogleClient(user_id, api_key)
 | `max_retries` | `int` | `3` | Максимальное количество попыток повтора |
 | `retry_delay` | `float` | `1.0` | Базовая задержка между попытками в секундах |
 | `enable_retry` | `bool` | `True` | Включить автоматические повторы |
+| `max_concurrent` | `int` | `10` | Максимум одновременных запросов (жесткое ограничение) |
 
 ### Экспоненциальный backoff:
 
@@ -164,7 +165,8 @@ client = GoogleClient(
     api_key="key",
     timeout=120,        # 2 минуты
     max_retries=5,      # 5 попыток
-    retry_delay=2.0     # базовая задержка 2 сек
+    retry_delay=2.0,    # базовая задержка 2 сек
+    max_concurrent=5    # максимум 5 одновременных запросов
 )
 
 # Отключить retry для продвинутых пользователей
@@ -179,7 +181,8 @@ async with AsyncGoogleClient(
     user_id=123,
     api_key="key", 
     max_retries=3,
-    retry_delay=1.5
+    retry_delay=1.5,
+    max_concurrent=8
 ) as client:
     result = await client.search("python")
 ```

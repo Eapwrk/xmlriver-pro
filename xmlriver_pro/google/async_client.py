@@ -52,6 +52,7 @@ class AsyncGoogleClient(AsyncBaseClient):
         max_retries: int = 3,
         retry_delay: float = 1.0,
         enable_retry: bool = True,
+        max_concurrent: int = 10,
         session: Optional[Any] = None,
     ):
         """
@@ -64,6 +65,7 @@ class AsyncGoogleClient(AsyncBaseClient):
             max_retries: Максимальное количество попыток повтора
             retry_delay: Базовая задержка между попытками в секундах
             enable_retry: Включить автоматические повторы
+            max_concurrent: Максимум одновременных запросов (по умолчанию 10)
             session: Существующая aiohttp сессия
         """
         super().__init__(
@@ -74,6 +76,7 @@ class AsyncGoogleClient(AsyncBaseClient):
             max_retries=max_retries,
             retry_delay=retry_delay,
             enable_retry=enable_retry,
+            max_concurrent=max_concurrent,
             session=session,
         )
 
