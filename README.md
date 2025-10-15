@@ -213,12 +213,12 @@ except ValidationError as e:
 ## 📊 Статистика и мониторинг
 
 ```python
-# Получение баланса
-balance = google.get_balance()
+# Получение баланса (один на весь аккаунт)
+balance = google.get_balance()  # или yandex.get_balance() - результат одинаковый
 
-# Получение стоимости
-google_cost = google.get_cost()
-yandex_cost = yandex.get_cost()
+# Получение стоимости (разная для каждой системы)
+google_cost = google.get_cost()  # Стоимость Google запросов
+yandex_cost = yandex.get_cost()  # Стоимость Yandex запросов
 
 # Проверка индексации
 is_indexed = google.check_indexing("https://python.org")
