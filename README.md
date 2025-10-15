@@ -42,7 +42,7 @@ __  ____  __ _     ____  _                  ____
 
 *Fork of [KursHub-ru/xmlriver](https://github.com/KursHub-ru/xmlriver)*
 
-[![🚀 Quick Start](#-быстрый-старт)](#-быстрый-старт) • [![📚 Documentation](#-документация)](#-документация) • [![🔧 Configuration](#-конфигурация)](#-конфигурация) • [![💡 Examples](#-примеры-использования)](#-примеры-использования)
+[🚀 Quick Start](#-быстрый-старт) • [📚 Documentation](#-документация) • [🔧 Configuration](#-конфигурация) • [💡 Examples](#-примеры-использования)
 
 </div>
 
