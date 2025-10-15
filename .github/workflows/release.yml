@@ -22,33 +22,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine
+        pip install build
         
     - name: Build package
       run: |
         python -m build
-        
-    - name: Check package
-      run: |
-        twine check dist/*
-        
-    - name: Upload to PyPI
-      if: github.event_name == 'push' && secrets.PYPI_API_TOKEN != ''
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        twine upload dist/*
-        
-    - name: PyPI Upload Skipped
-      if: github.event_name == 'push' && secrets.PYPI_API_TOKEN == ''
-      run: |
-        echo "PyPI upload skipped - PYPI_API_TOKEN not configured"
-        echo "Package built successfully and available via GitHub Releases"
-        echo "To enable PyPI upload:"
-        echo "1. Register at https://pypi.org"
-        echo "2. Create API token"
-        echo "3. Add PYPI_API_TOKEN to GitHub Secrets"
         
     - name: Create GitHub Release
       if: github.event_name == 'push'
