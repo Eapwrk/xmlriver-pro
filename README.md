@@ -309,9 +309,9 @@ mypy xmlriver_pro
 
 ## 📞 Поддержка
 
-- 📧 Email: support@xmlriver.com
-- 🐛 Issues: [GitHub Issues](https://github.com/xmlriver-pro/xmlriver-pro/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/xmlriver-pro/xmlriver-pro/discussions)
+- 📧 Email: seo@controlseo.ru
+- 🐛 Issues: [GitHub Issues](https://github.com/Eapwrk/xmlriver-pro/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/Eapwrk/xmlriver-pro/discussions)
 
 ---
 

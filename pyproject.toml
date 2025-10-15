@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "xmlriver-pro"
 version = "1.0.0"
 authors = [
-    {name = "XMLRiver Pro Team", email = "support@xmlriver.com"}
+    {name = "XMLRiver Pro Team", email = "seo@controlseo.ru"}
 ]
 description = "Professional Python client for XMLRiver API with full coverage"
 readme = "README.md"
