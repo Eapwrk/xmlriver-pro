@@ -14,6 +14,17 @@ from .exceptions import (
     NetworkError,
     raise_xmlriver_error,
 )
+
+# Официальные ограничения XMLRiver API
+MAX_CONCURRENT_STREAMS = 10  # Максимум потоков для каждой системы
+DEFAULT_TIMEOUT = 60  # Рекомендуемый таймаут (секунды)
+MAX_TIMEOUT = 60  # Максимальный таймаут (секунды)
+TYPICAL_RESPONSE_TIME = (3, 6)  # Обычная скорость ответа (секунды)
+DAILY_LIMITS = {
+    "google": 200_000,  # ~200k запросов/сутки
+    "yandex": 150_000,  # ~150k запросов/сутки
+    "wordstat": 150_000,  # Примерно как Yandex
+}
 from .types import SearchResponse, SearchResult
 
 logger = logging.getLogger(__name__)
@@ -51,7 +62,7 @@ class BaseClient:
             logger.setLevel(logging.INFO)
 
     def _make_request(
-        self, url: str, params: Dict[str, Any], max_retries: int = 3, timeout: int = 120
+        self, url: str, params: Dict[str, Any], max_retries: int = 3, timeout: int = DEFAULT_TIMEOUT
     ) -> Dict[str, Any]:
         """
         Выполнить запрос к API с обработкой ошибок
@@ -60,7 +71,7 @@ class BaseClient:
             url: URL для запроса
             params: Параметры запроса
             max_retries: Максимальное количество попыток
-            timeout: Таймаут запроса в секундах
+            timeout: Таймаут запроса в секундах (рекомендуется 60 сек)
 
         Returns:
             Словарь с ответом API
@@ -68,6 +79,12 @@ class BaseClient:
         Raises:
             XMLRiverError: При ошибках API
             NetworkError: При сетевых ошибках
+            
+        Note:
+            Официальные ограничения XMLRiver:
+            - Максимальный таймаут: 60 секунд
+            - Обычная скорость ответа: 3-6 секунд
+            - Доступно потоков: 10 для каждой системы
         """
         attempt = 0
 
@@ -246,6 +263,27 @@ class BaseClient:
         except ValueError as e:
             logger.error("Invalid cost response: %s", e)
             raise XMLRiverError(999, "Invalid cost response") from e
+
+    def get_api_limits(self) -> Dict[str, Any]:
+        """
+        Получить информацию об ограничениях API
+        
+        Returns:
+            Словарь с ограничениями API
+        """
+        return {
+            "max_concurrent_streams": MAX_CONCURRENT_STREAMS,
+            "default_timeout": DEFAULT_TIMEOUT,
+            "max_timeout": MAX_TIMEOUT,
+            "typical_response_time": TYPICAL_RESPONSE_TIME,
+            "daily_limits": DAILY_LIMITS,
+            "recommendations": {
+                "timeout": "Используйте таймаут 60 секунд для надежности",
+                "concurrent_requests": f"Максимум {MAX_CONCURRENT_STREAMS} одновременных запросов",
+                "daily_volume": "Соблюдайте дневные лимиты для избежания блокировки",
+                "error_handling": "Обрабатывайте ошибки 110, 111, 115 как временные"
+            }
+        }
 
     def check_indexing(self, url: str, strict: bool = False, **kwargs: Any) -> bool:
         """

@@ -188,25 +188,32 @@ formatted_ads = format_ads_response(ads_response)
 ```python
 from xmlriver_pro.core import (
     XMLRiverError, AuthenticationError, RateLimitError, 
-    NoResultsError, NetworkError, ValidationError
+    NoResultsError, NetworkError, ValidationError,
+    InsufficientFundsError, ServiceUnavailableError
 )
 
 try:
     results = google.search("python")
 except AuthenticationError as e:
-    # Обработка ошибки аутентификации
+    # Ошибка аутентификации (коды 31, 42, 45)
     logger.error(f"Authentication failed: {e}")
 except RateLimitError as e:
-    # Превышен лимит запросов
+    # Превышен лимит запросов (коды 110, 111, 115)
     logger.warning(f"Rate limit exceeded: {e}")
 except NoResultsError as e:
-    # Нет результатов поиска
+    # Нет результатов поиска (код 15)
     logger.info(f"No results found: {e}")
+except InsufficientFundsError as e:
+    # Недостаточно средств (код 200)
+    logger.error(f"Insufficient funds: {e}")
+except ServiceUnavailableError as e:
+    # Сервис недоступен (коды 101, 201)
+    logger.warning(f"Service unavailable: {e}")
 except NetworkError as e:
-    # Ошибка сети
+    # Ошибка сети (коды 500, 202) - требует повтора
     logger.error(f"Network error: {e}")
 except ValidationError as e:
-    # Ошибка валидации параметров
+    # Ошибка валидации параметров (коды 2, 102-108, 120, 121)
     logger.error(f"Validation error: {e}")
 ```
 
@@ -220,11 +227,46 @@ balance = google.get_balance()  # или yandex.get_balance() - результа
 google_cost = google.get_cost()  # Стоимость Google запросов
 yandex_cost = yandex.get_cost()  # Стоимость Yandex запросов
 
+# Получение информации об ограничениях API
+limits = google.get_api_limits()
+print(f"Максимум потоков: {limits['max_concurrent_streams']}")
+print(f"Дневной лимит Google: {limits['daily_limits']['google']:,} запросов")
+print(f"Дневной лимит Yandex: {limits['daily_limits']['yandex']:,} запросов")
+
 # Проверка индексации
 is_indexed = google.check_indexing("https://python.org")
 
 # Проверка доверия к домену
 is_trusted = google.is_trust_domain("python.org")
+```
+
+## ⚡ Ограничения API
+
+### 🔢 **Потоки и производительность:**
+- **Максимум потоков:** 10 для каждой системы (Google, Yandex, Wordstat)
+- **Дневные лимиты:**
+  - Google: ~200,000 запросов/сутки
+  - Yandex: ~150,000 запросов/сутки
+- **Скорость ответа:** 3-6 секунд (обычно), максимум 60 секунд
+
+### ⏱️ **Рекомендации по таймаутам:**
+```python
+# Используйте таймаут 60 секунд для надежности
+google = GoogleClient(user_id=123, api_key="key", timeout=60)
+
+# При низком таймауте есть риск потерять ответы
+# Деньги за запрос снимаются, но результат может не прийти
+```
+
+### 🚨 **Обработка ошибок потоков:**
+```python
+try:
+    results = google.search("python")
+except RateLimitError as e:
+    if e.code in [110, 111, 115]:
+        # Временные ошибки потоков - повторите запрос
+        time.sleep(5)  # Подождите 5 секунд
+        results = google.search("python")  # Повторите
 ```
 
 ## 🧪 Тестирование
