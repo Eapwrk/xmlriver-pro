@@ -109,6 +109,30 @@ pip install -e .
 
 ## ⚙️ Конфигурация
 
+### Переменные окружения
+
+Для удобства тестирования и разработки можно использовать переменные окружения:
+
+```bash
+# Создайте файл .env в корне проекта
+XMLRIVER_USER_ID=6881
+XMLRIVER_API_KEY=your_api_key_here
+```
+
+```python
+import os
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения
+load_dotenv()
+
+# Используем в коде
+user_id = int(os.getenv("XMLRIVER_USER_ID", "0"))
+api_key = os.getenv("XMLRIVER_API_KEY", "")
+
+client = GoogleClient(user_id, api_key)
+```
+
 Все клиенты поддерживают настройку retry механизма и таймаутов:
 
 ### Параметры конфигурации:
