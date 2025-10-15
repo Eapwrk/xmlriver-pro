@@ -1,0 +1,19 @@
+# XMLRiver Pro Requirements
+# Core dependencies
+requests>=2.31.0
+xmltodict>=0.13.0
+
+# Development dependencies (optional)
+# Install with: pip install -r requirements.txt[dev]
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+pylint>=2.17.0
+mypy>=1.0.0
+pre-commit>=3.0.0
+
+# Documentation dependencies (optional)
+# Install with: pip install -r requirements.txt[docs]
+sphinx>=6.0.0
+sphinx-rtd-theme>=1.2.0
+myst-parser>=1.0.0
