@@ -4,9 +4,10 @@
 
 import asyncio
 import logging
+from typing import Dict, Any, Optional
+
 import aiohttp
 import xmltodict
-from typing import Dict, Any, Optional
 
 from .exceptions import (
     XMLRiverError,
@@ -20,9 +21,8 @@ from .types import SearchResponse
 logger = logging.getLogger(__name__)
 
 # Константы для API
-BASE_URL = "https://xmlriver.com/api"
 DEFAULT_TIMEOUT = 60
-MAX_TIMEOUT = 300
+MAX_TIMEOUT = 60
 TYPICAL_RESPONSE_TIME = 3.0
 DAILY_LIMITS = {"google": 200_000, "yandex": 150_000}
 MAX_CONCURRENT_STREAMS = 10
@@ -84,13 +84,13 @@ class AsyncBaseClient:
             await self._session.close()
 
     async def _make_request(
-        self, endpoint: str, params: Dict[str, Any], search_type: str = "web"
+        self, url: str, params: Dict[str, Any], search_type: str = "web"
     ) -> SearchResponse:
         """
         Выполнение асинхронного HTTP запроса к API с retry механизмом
 
         Args:
-            endpoint: Конечная точка API
+            url: Полный URL для запроса
             params: Параметры запроса
             search_type: Тип поиска
 
@@ -104,19 +104,23 @@ class AsyncBaseClient:
             NetworkError: Сетевая ошибка
         """
         if not self.enable_retry:
-            return await self._make_single_request(endpoint, params, search_type)
+            return await self._make_single_request(url, params, search_type)
 
         attempt = 0
         while attempt < self.max_retries:
             try:
-                return await self._make_single_request(endpoint, params, search_type)
+                return await self._make_single_request(url, params, search_type)
             except (RateLimitError, NetworkError) as e:
                 attempt += 1
                 if attempt < self.max_retries:
                     delay = self.retry_delay * (2 ** (attempt - 1))
                     logger.warning(
-                        "Request failed: %s. Retrying in %.1f seconds... (attempt %s/%s)",
-                        e, delay, attempt, self.max_retries
+                        "Request failed: %s. Retrying in %.1f seconds... "
+                        "(attempt %s/%s)",
+                        e,
+                        delay,
+                        attempt,
+                        self.max_retries,
                     )
                     await asyncio.sleep(delay)
                 else:
@@ -126,13 +130,13 @@ class AsyncBaseClient:
         raise NetworkError(999, "Max retries exceeded")
 
     async def _make_single_request(
-        self, endpoint: str, params: Dict[str, Any], search_type: str = "web"
+        self, url: str, params: Dict[str, Any], search_type: str = "web"
     ) -> SearchResponse:
         """
         Выполнение одиночного асинхронного HTTP запроса к API без повторов
 
         Args:
-            endpoint: Конечная точка API
+            url: Полный URL для запроса
             params: Параметры запроса
             search_type: Тип поиска
 
@@ -158,8 +162,7 @@ class AsyncBaseClient:
             }
         )
 
-        # Формируем URL
-        url = f"{BASE_URL}/{endpoint}"
+        # URL уже полный, используем как есть
 
         try:
             response = await self._session.get(url, params=params)
@@ -167,9 +170,9 @@ class AsyncBaseClient:
                 # Проверяем статус ответа
                 if resp.status == 401:
                     raise AuthenticationError(401, "Invalid API key or user ID")
-                elif resp.status == 429:
+                if resp.status == 429:
                     raise RateLimitError(429, "Rate limit exceeded")
-                elif resp.status != 200:
+                if resp.status != 200:
                     raise NetworkError(resp.status, f"HTTP {resp.status}")
 
                 # Читаем и парсим ответ

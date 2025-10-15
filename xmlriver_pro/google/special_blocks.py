@@ -27,7 +27,7 @@ class GoogleSpecialBlocks(BaseClient):
         Returns:
             Список OneBox документов
         """
-        response = self.search(query, **kwargs)
+        response = self.search(query, **kwargs)  # pylint: disable=no-member
 
         onebox_docs = []
         for result in response.results:

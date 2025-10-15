@@ -181,7 +181,9 @@ class GoogleImages(BaseClient):
         response = self.search_images(query, **kwargs)
 
         # Извлекаем suggestedsearches из ответа
-        suggested_searches = response.get("suggestedsearches", {}).get("item", [])
+        suggested_searches = response.get("suggestedsearches", {}).get(
+            "item", []
+        )  # pylint: disable=no-member
         if isinstance(suggested_searches, list):
             return [
                 item.get("name", "") for item in suggested_searches if item.get("name")

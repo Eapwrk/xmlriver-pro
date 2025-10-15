@@ -16,6 +16,7 @@ from ..core.types import (
     TimeFilter,
     DeviceType,
     OSType,
+    RelatedSearch,
 )
 from ..core.exceptions import ValidationError
 from ..utils.validators import (
@@ -35,6 +36,8 @@ class AsyncYandexClient(AsyncBaseClient):
     - Рекламные блоки
     - Специальные блоки (колдунщики)
     """
+
+    BASE_URL = "https://xmlriver.com/search_yandex/xml"
 
     def __init__(
         self,
@@ -115,7 +118,7 @@ class AsyncYandexClient(AsyncBaseClient):
             **kwargs,
         }
 
-        return await self._make_request("search", params, search_type.value)
+        return await self._make_request(self.BASE_URL, params, search_type.value)
 
     async def search_news(
         self,
@@ -149,7 +152,7 @@ class AsyncYandexClient(AsyncBaseClient):
         if time_filter:
             params["time"] = time_filter.value
 
-        return await self._make_request("search", params, "news")
+        return await self._make_request(self.BASE_URL, params, "news")
 
     async def get_ads(
         self, query: str, num_results: int = 10, **kwargs
@@ -167,7 +170,7 @@ class AsyncYandexClient(AsyncBaseClient):
         """
         params = {"query": query, "type": "ads", "num": num_results, **kwargs}
 
-        return await self._make_request("search", params, "ads")
+        return await self._make_request(self.BASE_URL, params, "ads")
 
     async def get_special_blocks(self, query: str, **kwargs) -> SearchResponse:
         """
@@ -182,7 +185,7 @@ class AsyncYandexClient(AsyncBaseClient):
         """
         params = {"query": query, "type": "special", **kwargs}
 
-        return await self._make_request("search", params, "special")
+        return await self._make_request(self.BASE_URL, params, "special")
 
     def _extract_results(
         self, data: Dict[str, Any], search_type: str
@@ -253,7 +256,7 @@ class AsyncYandexClient(AsyncBaseClient):
                     media=item.get("media"),
                     pub_date=item.get("pub_date"),
                 )
-            elif search_type == "ads":
+            if search_type == "ads":
                 return AdResult(
                     url=item.get("url", ""),
                     ads_url=item.get("ads_url", ""),
@@ -267,6 +270,6 @@ class AsyncYandexClient(AsyncBaseClient):
                     url=item.get("url", ""),
                     snippet=item.get("snippet", ""),
                 )
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError) as _:
             # Логируем ошибку и возвращаем None
             return None

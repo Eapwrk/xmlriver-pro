@@ -2,18 +2,20 @@
 Базовый клиент для работы с XMLRiver API
 """
 
-import time
 import logging
+import time
 from typing import Optional, Dict, Any, List
 
 import requests
 import xmltodict
+
 from .exceptions import (
     XMLRiverError,
     NoResultsError,
     NetworkError,
     raise_xmlriver_error,
 )
+from .types import SearchResponse, SearchResult
 
 # Официальные ограничения XMLRiver API
 MAX_CONCURRENT_STREAMS = 10  # Максимум потоков для каждой системы
@@ -25,7 +27,6 @@ DAILY_LIMITS = {
     "yandex": 150_000,  # ~150k запросов/сутки
     "wordstat": 150_000,  # Примерно как Yandex
 }
-from .types import SearchResponse, SearchResult
 
 logger = logging.getLogger(__name__)
 
@@ -34,14 +35,14 @@ class BaseClient:
     """Базовый клиент для работы с XMLRiver API"""
 
     def __init__(
-        self, 
-        user_id: int, 
-        api_key: str, 
+        self,
+        user_id: int,
+        api_key: str,
         timeout: int = DEFAULT_TIMEOUT,
         max_retries: int = 3,
         retry_delay: float = 1.0,
         enable_retry: bool = True,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Инициализация клиента
@@ -111,10 +112,14 @@ class BaseClient:
                 return self._make_single_request(url, params)
             except (requests.RequestException, XMLRiverError) as e:
                 if attempt < self.max_retries - 1:  # Не последняя попытка
-                    delay = self.retry_delay * (2 ** attempt)
+                    delay = self.retry_delay * (2**attempt)
                     logger.warning(
-                        "Request failed: %s. Retrying in %.1f seconds... (attempt %s/%s)",
-                        e, delay, attempt + 1, self.max_retries
+                        "Request failed: %s. Retrying in %.1f seconds... "
+                        "(attempt %s/%s)",
+                        e,
+                        delay,
+                        attempt + 1,
+                        self.max_retries,
                     )
                     time.sleep(delay)
                 else:
@@ -333,7 +338,7 @@ class BaseClient:
         params.update(kwargs)
 
         try:
-            response = self.search(url, **params)
+            response = self.search(url, **params)  # pylint: disable=no-member
             return any(result.url == url for result in response.results)
         except NoResultsError:
             return False

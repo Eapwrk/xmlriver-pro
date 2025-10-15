@@ -42,6 +42,8 @@ class AsyncGoogleClient(AsyncBaseClient):
     - Специальные блоки
     """
 
+    BASE_URL = "http://xmlriver.com/search/xml"
+
     def __init__(
         self,
         user_id: int,
@@ -121,7 +123,7 @@ class AsyncGoogleClient(AsyncBaseClient):
             **kwargs,
         }
 
-        return await self._make_request("search", params, search_type.value)
+        return await self._make_request(self.BASE_URL, params, search_type.value)
 
     async def search_news(
         self,
@@ -155,7 +157,7 @@ class AsyncGoogleClient(AsyncBaseClient):
         if time_filter:
             params["time"] = time_filter.value
 
-        return await self._make_request("search", params, "news")
+        return await self._make_request(self.BASE_URL, params, "news")
 
     async def search_images(
         self,
@@ -197,7 +199,7 @@ class AsyncGoogleClient(AsyncBaseClient):
         if image_type:
             params["imgtype"] = image_type
 
-        return await self._make_request("search", params, "images")
+        return await self._make_request(self.BASE_URL, params, "images")
 
     async def search_maps(
         self,
@@ -230,7 +232,7 @@ class AsyncGoogleClient(AsyncBaseClient):
             validate_zoom(zoom)
             params["zoom"] = zoom
 
-        return await self._make_request("search", params, "maps")
+        return await self._make_request(self.BASE_URL, params, "maps")
 
     async def get_ads(
         self, query: str, num_results: int = 10, **kwargs
@@ -248,7 +250,7 @@ class AsyncGoogleClient(AsyncBaseClient):
         """
         params = {"query": query, "type": "ads", "num": num_results, **kwargs}
 
-        return await self._make_request("search", params, "ads")
+        return await self._make_request(self.BASE_URL, params, "ads")
 
     async def get_special_blocks(self, query: str, **kwargs) -> SearchResponse:
         """
@@ -263,7 +265,7 @@ class AsyncGoogleClient(AsyncBaseClient):
         """
         params = {"query": query, "type": "special", **kwargs}
 
-        return await self._make_request("search", params, "special")
+        return await self._make_request(self.BASE_URL, params, "special")
 
     def _extract_results(
         self, data: Dict[str, Any], search_type: str
@@ -323,7 +325,7 @@ class AsyncGoogleClient(AsyncBaseClient):
                     media=item.get("media"),
                     pub_date=item.get("pub_date"),
                 )
-            elif search_type == "images":
+            if search_type == "images":
                 return ImageResult(
                     rank=int(item.get("position", 0)),
                     url=item.get("url", ""),
@@ -341,7 +343,7 @@ class AsyncGoogleClient(AsyncBaseClient):
                         else None
                     ),
                 )
-            elif search_type == "maps":
+            if search_type == "maps":
                 return MapResult(
                     title=item.get("title", ""),
                     stars=float(item.get("stars")) if item.get("stars") else None,
@@ -369,7 +371,7 @@ class AsyncGoogleClient(AsyncBaseClient):
                         else None
                     ),
                 )
-            elif search_type == "ads":
+            if search_type == "ads":
                 return AdResult(
                     url=item.get("url", ""),
                     ads_url=item.get("ads_url", ""),
@@ -383,6 +385,6 @@ class AsyncGoogleClient(AsyncBaseClient):
                     url=item.get("url", ""),
                     snippet=item.get("snippet", ""),
                 )
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError) as _:
             # Логируем ошибку и возвращаем None
             return None

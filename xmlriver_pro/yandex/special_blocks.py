@@ -20,13 +20,17 @@ class YandexSpecialBlocks(BaseClient):
 
         Args:
             query: Поисковый запрос
-            types: Список типов колдунщиков (organic, address, afisha, avia, businessChatCenter, calculator, colors, converter, convertercurrency, fact, formula, images, index, ipaddress, lyrics, maps, market, misspell, music, news, quotes, shedule, sportscore, time, translate, uslugi, video, weather)
+            types: Список типов колдунщиков (organic, address, afisha, avia,
+                businessChatCenter, calculator, colors, converter, convertercurrency,
+                fact, formula, images, index, ipaddress, lyrics, maps, market,
+                misspell, music, news, quotes, shedule, sportscore, time, translate,
+                uslugi, video, weather)
             **kwargs: Дополнительные параметры
 
         Returns:
             Список колдунщиков
         """
-        response = self.search(query, **kwargs)
+        response = self.search(query, **kwargs)  # pylint: disable=no-member
 
         searchsters = []
         for result in response.results:
