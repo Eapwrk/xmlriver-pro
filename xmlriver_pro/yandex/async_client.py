@@ -193,8 +193,22 @@ class AsyncYandexClient(AsyncBaseClient):
         """Извлечение результатов из ответа Yandex API"""
         results = []
 
-        # Извлекаем основные результаты
-        if "results" in data and "result" in data["results"]:
+        # Извлекаем основные результаты из Yandex API структуры
+        if "response" in data and "results" in data["response"]:
+            response_data = data["response"]
+            if "grouping" in response_data["results"] and "group" in response_data["results"]["grouping"]:
+                groups = response_data["results"]["grouping"]["group"]
+                if not isinstance(groups, list):
+                    groups = [groups]
+
+                for group in groups:
+                    if "doc" in group:
+                        doc = group["doc"]
+                        result = self._create_search_result(doc, search_type)
+                        if result:
+                            results.append(result)
+        elif "results" in data and "result" in data["results"]:
+            # Fallback для старого формата
             results_data = data["results"]["result"]
             if not isinstance(results_data, list):
                 results_data = [results_data]
@@ -247,12 +261,21 @@ class AsyncYandexClient(AsyncBaseClient):
     ) -> Optional[SearchResult]:
         """Создание объекта результата поиска"""
         try:
+            # Извлекаем snippet из passages для Yandex API
+            snippet = ""
+            if "passages" in item and "passage" in item["passages"]:
+                passages = item["passages"]["passage"]
+                if isinstance(passages, list):
+                    snippet = " ".join(passages)
+                else:
+                    snippet = str(passages)
+            
             if search_type == "news":
                 return NewsResult(
                     rank=int(item.get("position", 0)),
                     url=item.get("url", ""),
                     title=item.get("title", ""),
-                    snippet=item.get("snippet", ""),
+                    snippet=snippet or item.get("snippet", ""),
                     media=item.get("media"),
                     pub_date=item.get("pub_date"),
                 )
@@ -261,14 +284,14 @@ class AsyncYandexClient(AsyncBaseClient):
                     url=item.get("url", ""),
                     ads_url=item.get("ads_url", ""),
                     title=item.get("title", ""),
-                    snippet=item.get("snippet", ""),
+                    snippet=snippet or item.get("snippet", ""),
                 )
             # web
             return SearchResult(
                 rank=int(item.get("position", 0)),
                 title=item.get("title", ""),
                 url=item.get("url", ""),
-                snippet=item.get("snippet", ""),
+                snippet=snippet or item.get("snippet", ""),
             )
         except (ValueError, KeyError) as _:
             # Логируем ошибку и возвращаем None

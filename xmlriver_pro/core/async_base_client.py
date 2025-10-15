@@ -222,9 +222,16 @@ class AsyncBaseClient:
                 raise APIError(error_code, error_message)
 
             # Создаем SearchResponse
+            # Извлекаем total из response.found для Yandex API
+            total_results = 0
+            if "response" in response_data and "found" in response_data["response"]:
+                total_results = int(response_data["response"]["found"].get("#text", 0))
+            elif "total" in response_data:
+                total_results = int(response_data["total"])
+            
             return SearchResponse(
                 query=response_data.get("query", query),
-                total_results=int(response_data.get("total", 0)),
+                total_results=total_results,
                 results=self._extract_results(response_data, search_type),
             )
 
