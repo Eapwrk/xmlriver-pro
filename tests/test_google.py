@@ -390,3 +390,99 @@ class TestGoogleAds:
 
         has_ads = self.ads.has_ads("python")
         assert has_ads is False
+
+
+class TestGoogleClientRetry:
+    """Тесты retry механизма для GoogleClient"""
+
+    def test_retry_configuration_defaults(self):
+        """Тест конфигурации retry по умолчанию"""
+        client = GoogleClient(user_id=123, api_key="test_key")
+        
+        assert client.timeout == 60
+        assert client.max_retries == 3
+        assert client.retry_delay == 1.0
+        assert client.enable_retry is True
+
+    def test_retry_configuration_custom(self):
+        """Тест кастомной конфигурации retry"""
+        client = GoogleClient(
+            user_id=123, 
+            api_key="test_key",
+            timeout=120,
+            max_retries=5,
+            retry_delay=2.0,
+            enable_retry=False
+        )
+        
+        assert client.timeout == 60  # Максимум 60
+        assert client.max_retries == 5
+        assert client.retry_delay == 2.0
+        assert client.enable_retry is False
+
+    @patch("xmlriver_pro.core.base_client.BaseClient._make_single_request")
+    def test_retry_disabled(self, mock_single_request):
+        """Тест отключенного retry"""
+        client = GoogleClient(user_id=123, api_key="test_key", enable_retry=False)
+        
+        # Мокаем успешный ответ
+        mock_response = {"results": {"grouping": {"group": []}}}
+        mock_single_request.return_value = mock_response
+        
+        result = client.search("test")
+        
+        # Должен быть только один вызов без повторов
+        mock_single_request.assert_called_once()
+        assert result is not None
+
+    @patch("xmlriver_pro.core.base_client.BaseClient._make_single_request")
+    @patch("time.sleep")
+    def test_retry_with_exponential_backoff(self, mock_sleep, mock_single_request):
+        """Тест retry с экспоненциальным backoff"""
+        client = GoogleClient(
+            user_id=123, 
+            api_key="test_key",
+            max_retries=3,
+            retry_delay=1.0
+        )
+        
+        # Первые два вызова падают, третий успешен
+        from requests import RequestException
+        mock_single_request.side_effect = [
+            RequestException("Network error"),
+            RequestException("Network error"), 
+            {"results": {"grouping": {"group": []}}}
+        ]
+        
+        result = client.search("test")
+        
+        # Проверяем количество вызовов
+        assert mock_single_request.call_count == 3
+        
+        # Проверяем задержки: 1.0, 2.0 секунды (2^0, 2^1)
+        expected_delays = [1.0, 2.0]
+        actual_delays = [call[0][0] for call in mock_sleep.call_args_list]
+        assert actual_delays == expected_delays
+        
+        assert result is not None
+
+    @patch("xmlriver_pro.core.base_client.BaseClient._make_single_request")
+    @patch("time.sleep")
+    def test_retry_max_attempts_exceeded(self, mock_sleep, mock_single_request):
+        """Тест превышения максимального количества попыток"""
+        client = GoogleClient(
+            user_id=123, 
+            api_key="test_key",
+            max_retries=2,
+            retry_delay=0.1  # Быстрый тест
+        )
+        
+        # Все попытки падают
+        from requests import RequestException
+        mock_single_request.side_effect = RequestException("Persistent error")
+        
+        with pytest.raises(RequestException, match="Persistent error"):
+            client.search("test")
+        
+        # Проверяем количество попыток (max_retries = 2)
+        assert mock_single_request.call_count == 2

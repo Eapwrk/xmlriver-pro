@@ -33,17 +33,34 @@ logger = logging.getLogger(__name__)
 class BaseClient:
     """Базовый клиент для работы с XMLRiver API"""
 
-    def __init__(self, user_id: int, api_key: str, **kwargs: Any) -> None:
+    def __init__(
+        self, 
+        user_id: int, 
+        api_key: str, 
+        timeout: int = DEFAULT_TIMEOUT,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+        enable_retry: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         Инициализация клиента
 
         Args:
             user_id: ID пользователя XMLRiver
             api_key: API ключ
+            timeout: Таймаут запроса в секундах (по умолчанию 60)
+            max_retries: Максимальное количество попыток повтора (по умолчанию 3)
+            retry_delay: Базовая задержка между попытками в секундах (по умолчанию 1.0)
+            enable_retry: Включить автоматические повторы (по умолчанию True)
             **kwargs: Дополнительные параметры
         """
         self.user_id = user_id
         self.api_key = api_key
+        self.timeout = min(timeout, MAX_TIMEOUT)
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+        self.enable_retry = enable_retry
         self.base_params = {
             "user": self.user_id,
             "key": self.api_key,
@@ -65,17 +82,13 @@ class BaseClient:
         self,
         url: str,
         params: Dict[str, Any],
-        max_retries: int = 3,
-        timeout: int = DEFAULT_TIMEOUT,
     ) -> Dict[str, Any]:
         """
-        Выполнить запрос к API с обработкой ошибок
+        Выполнить запрос к API с обработкой ошибок и экспоненциальным backoff
 
         Args:
             url: URL для запроса
             params: Параметры запроса
-            max_retries: Максимальное количество попыток
-            timeout: Таймаут запроса в секундах (рекомендуется 60 сек)
 
         Returns:
             Словарь с ответом API
@@ -90,46 +103,59 @@ class BaseClient:
             - Обычная скорость ответа: 3-6 секунд
             - Доступно потоков: 10 для каждой системы
         """
-        attempt = 0
+        if not self.enable_retry:
+            return self._make_single_request(url, params)
 
-        while attempt < max_retries:
+        for attempt in range(self.max_retries):
             try:
-                logger.debug("Making request to %s with params: %s", url, params)
-                response = self.session.get(url, params=params, timeout=timeout)
-
-                if response.status_code == 200:
-                    parsed = xmltodict.parse(response.text)
-                    api_response = parsed["yandexsearch"]["response"]
-
-                    if "error" in api_response:
-                        error_code = int(api_response["error"]["@code"])
-                        error_text = api_response["error"].get("#text", "")
-                        logger.error("API error %s: %s", error_code, error_text)
-                        raise_xmlriver_error(error_code, error_text)
-
-                    logger.debug("Request successful")
-                    return api_response
-
-                logger.warning(
-                    "HTTP %s, retry %s/%s",
-                    response.status_code,
-                    attempt + 1,
-                    max_retries,
-                )
-
-            except requests.RequestException as e:
-                logger.error("Request failed: %s", e)
-
-            attempt += 1
-            if attempt < max_retries:
-                logger.info(
-                    "Retrying in 10 seconds... (attempt %s/%s)",
-                    attempt + 1,
-                    max_retries,
-                )
-                time.sleep(10)
+                return self._make_single_request(url, params)
+            except (requests.RequestException, XMLRiverError) as e:
+                if attempt < self.max_retries - 1:  # Не последняя попытка
+                    delay = self.retry_delay * (2 ** attempt)
+                    logger.warning(
+                        "Request failed: %s. Retrying in %.1f seconds... (attempt %s/%s)",
+                        e, delay, attempt + 1, self.max_retries
+                    )
+                    time.sleep(delay)
+                else:
+                    logger.error("Max retries (%s) exceeded", self.max_retries)
+                    raise
 
         raise NetworkError(999, "Max retries exceeded")
+
+    def _make_single_request(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Выполнить одиночный запрос к API без повторов
+
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+
+        Returns:
+            Словарь с ответом API
+
+        Raises:
+            XMLRiverError: При ошибках API
+            NetworkError: При сетевых ошибках
+        """
+        logger.debug("Making request to %s with params: %s", url, params)
+        response = self.session.get(url, params=params, timeout=self.timeout)
+
+        if response.status_code == 200:
+            parsed = xmltodict.parse(response.text)
+            api_response = parsed["yandexsearch"]["response"]
+
+            if "error" in api_response:
+                error_code = int(api_response["error"]["@code"])
+                error_text = api_response["error"].get("#text", "")
+                logger.error("API error %s: %s", error_code, error_text)
+                raise_xmlriver_error(error_code, error_text)
+
+            logger.debug("Request successful")
+            return api_response
+
+        logger.warning("HTTP %s", response.status_code)
+        raise NetworkError(response.status_code, f"HTTP {response.status_code}")
 
     def _parse_results(self, response: Dict[str, Any]) -> SearchResponse:
         """

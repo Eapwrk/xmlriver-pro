@@ -3,6 +3,7 @@
 """
 
 import asyncio
+import logging
 import aiohttp
 import xmltodict
 from typing import Dict, Any, Optional
@@ -15,6 +16,8 @@ from .exceptions import (
     APIError,
 )
 from .types import SearchResponse
+
+logger = logging.getLogger(__name__)
 
 # Константы для API
 BASE_URL = "https://xmlriver.com/api"
@@ -39,6 +42,9 @@ class AsyncBaseClient:
         api_key: str,
         system: str,
         timeout: int = DEFAULT_TIMEOUT,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+        enable_retry: bool = True,
         session: Optional[aiohttp.ClientSession] = None,
     ):
         """
@@ -49,12 +55,18 @@ class AsyncBaseClient:
             api_key: API ключ
             system: Система поиска (google/yandex)
             timeout: Таймаут запроса в секундах
+            max_retries: Максимальное количество попыток повтора (по умолчанию 3)
+            retry_delay: Базовая задержка между попытками в секундах (по умолчанию 1.0)
+            enable_retry: Включить автоматические повторы (по умолчанию True)
             session: Существующая aiohttp сессия (опционально)
         """
         self.user_id = user_id
         self.api_key = api_key
         self.system = system
-        self.timeout = min(timeout, MAX_TIMEOUT)
+        self.timeout = min(timeout, 60)  # Максимум 60 секунд как в BaseClient
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+        self.enable_retry = enable_retry
         self._session = session
         self._own_session = session is None
 
@@ -75,7 +87,49 @@ class AsyncBaseClient:
         self, endpoint: str, params: Dict[str, Any], search_type: str = "web"
     ) -> SearchResponse:
         """
-        Выполнение асинхронного HTTP запроса к API
+        Выполнение асинхронного HTTP запроса к API с retry механизмом
+
+        Args:
+            endpoint: Конечная точка API
+            params: Параметры запроса
+            search_type: Тип поиска
+
+        Returns:
+            SearchResponse: Результат поиска
+
+        Raises:
+            XMLRiverError: Общая ошибка API
+            AuthenticationError: Ошибка аутентификации
+            RateLimitError: Превышение лимитов
+            NetworkError: Сетевая ошибка
+        """
+        if not self.enable_retry:
+            return await self._make_single_request(endpoint, params, search_type)
+
+        attempt = 0
+        while attempt < self.max_retries:
+            try:
+                return await self._make_single_request(endpoint, params, search_type)
+            except (RateLimitError, NetworkError) as e:
+                attempt += 1
+                if attempt < self.max_retries:
+                    delay = self.retry_delay * (2 ** (attempt - 1))
+                    logger.warning(
+                        "Request failed: %s. Retrying in %.1f seconds... (attempt %s/%s)",
+                        e, delay, attempt, self.max_retries
+                    )
+                    await asyncio.sleep(delay)
+                else:
+                    logger.error("Max retries (%s) exceeded", self.max_retries)
+                    raise
+
+        raise NetworkError(999, "Max retries exceeded")
+
+    async def _make_single_request(
+        self, endpoint: str, params: Dict[str, Any], search_type: str = "web"
+    ) -> SearchResponse:
+        """
+        Выполнение одиночного асинхронного HTTP запроса к API без повторов
 
         Args:
             endpoint: Конечная точка API

@@ -13,6 +13,38 @@ class GoogleClient(BaseClient):
 
     BASE_URL = "http://xmlriver.com/search/xml"
 
+    def __init__(
+        self,
+        user_id: int,
+        api_key: str,
+        timeout: int = 60,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+        enable_retry: bool = True,
+        **kwargs: Any,
+    ):
+        """
+        Инициализация Google клиента
+
+        Args:
+            user_id: ID пользователя XMLRiver
+            api_key: API ключ
+            timeout: Таймаут запроса в секундах
+            max_retries: Максимальное количество попыток повтора
+            retry_delay: Базовая задержка между попытками в секундах
+            enable_retry: Включить автоматические повторы
+            **kwargs: Дополнительные параметры
+        """
+        super().__init__(
+            user_id=user_id,
+            api_key=api_key,
+            timeout=timeout,
+            max_retries=max_retries,
+            retry_delay=retry_delay,
+            enable_retry=enable_retry,
+            **kwargs,
+        )
+
     def search(
         self,
         query: str,

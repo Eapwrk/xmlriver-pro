@@ -47,6 +47,9 @@ class AsyncGoogleClient(AsyncBaseClient):
         user_id: int,
         api_key: str,
         timeout: int = 60,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+        enable_retry: bool = True,
         session: Optional[Any] = None,
     ):
         """
@@ -56,9 +59,21 @@ class AsyncGoogleClient(AsyncBaseClient):
             user_id: ID пользователя XMLRiver
             api_key: API ключ
             timeout: Таймаут запроса в секундах
+            max_retries: Максимальное количество попыток повтора
+            retry_delay: Базовая задержка между попытками в секундах
+            enable_retry: Включить автоматические повторы
             session: Существующая aiohttp сессия
         """
-        super().__init__(user_id, api_key, "google", timeout, session)
+        super().__init__(
+            user_id=user_id,
+            api_key=api_key,
+            system="google",
+            timeout=timeout,
+            max_retries=max_retries,
+            retry_delay=retry_delay,
+            enable_retry=enable_retry,
+            session=session,
+        )
 
     async def search(
         self,

@@ -75,7 +75,7 @@ from .utils import (
 )
 
 # Версия и метаданные
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 __author__ = "XMLRiver Pro Team"
 __email__ = "support@xmlriver.com"
 

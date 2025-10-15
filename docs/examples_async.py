@@ -17,7 +17,7 @@ async def basic_async_search_example():
     print("🚀 Базовый асинхронный поиск")
     print("=" * 40)
     
-    # Используем async context manager
+    # Используем async context manager с настройками по умолчанию
     async with AsyncGoogleClient(user_id=123, api_key="your_google_key") as google:
         try:
             # Простой поиск
@@ -238,6 +238,40 @@ async def advanced_async_example():
             print(f"❌ Общая ошибка: {e}")
 
 
+async def retry_configuration_example():
+    """Пример настройки retry механизма"""
+    
+    print("⚙️ Настройка retry механизма")
+    print("=" * 40)
+    
+    # Кастомные настройки retry
+    async with AsyncGoogleClient(
+        user_id=123, 
+        api_key="your_google_key",
+        timeout=120,        # 2 минуты таймаут
+        max_retries=5,      # 5 попыток
+        retry_delay=2.0,    # базовая задержка 2 сек
+        enable_retry=True   # включить retry
+    ) as google:
+        try:
+            results = await google.search("machine learning")
+            print(f"✅ Поиск с кастомными настройками: {results.total_results} результатов")
+        except Exception as e:
+            print(f"❌ Ошибка: {e}")
+    
+    # Отключение retry для продвинутых пользователей
+    async with AsyncGoogleClient(
+        user_id=123, 
+        api_key="your_google_key",
+        enable_retry=False  # без повторов
+    ) as google:
+        try:
+            results = await google.search("deep learning")
+            print(f"✅ Поиск без retry: {results.total_results} результатов")
+        except Exception as e:
+            print(f"❌ Ошибка (ожидаемо без retry): {e}")
+
+
 async def main():
     """Главная функция с примерами"""
     
@@ -252,6 +286,7 @@ async def main():
     await mixed_google_yandex_example()
     await adaptive_rate_limiting_async_example()
     await batch_processing_async_example()
+    await retry_configuration_example()
     await advanced_async_example()
     
     print(f"\n✅ Все примеры завершены за {time.time() - start_time:.2f} секунд")
