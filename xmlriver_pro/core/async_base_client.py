@@ -73,6 +73,7 @@ class AsyncBaseClient:
         self._session = session
         self._own_session = session is None
         self._semaphore = asyncio.Semaphore(max_concurrent)
+        self._active_requests = 0
 
     async def __aenter__(self):
         """Async context manager entry"""
@@ -107,33 +108,37 @@ class AsyncBaseClient:
             RateLimitError: Превышение лимитов
             NetworkError: Сетевая ошибка
         """
-        # Ограничиваем количество одновременных запросов
+        # Ограничиваем количество активных запросов на уровне клиента
         async with self._semaphore:
-            if not self.enable_retry:
-                return await self._make_single_request(url, params, search_type)
-
-            attempt = 0
-            while attempt < self.max_retries:
-                try:
+            self._active_requests += 1
+            try:
+                if not self.enable_retry:
                     return await self._make_single_request(url, params, search_type)
-                except (RateLimitError, NetworkError) as e:
-                    attempt += 1
-                    if attempt < self.max_retries:
-                        delay = self.retry_delay * (2 ** (attempt - 1))
-                        logger.warning(
-                            "Request failed: %s. Retrying in %.1f seconds... "
-                            "(attempt %s/%s)",
-                            e,
-                            delay,
-                            attempt,
-                            self.max_retries,
-                        )
-                        await asyncio.sleep(delay)
-                    else:
-                        logger.error("Max retries (%s) exceeded", self.max_retries)
-                        raise
 
-            raise NetworkError(999, "Max retries exceeded")
+                attempt = 0
+                while attempt < self.max_retries:
+                    try:
+                        return await self._make_single_request(url, params, search_type)
+                    except (RateLimitError, NetworkError) as e:
+                        attempt += 1
+                        if attempt < self.max_retries:
+                            delay = self.retry_delay * (2 ** (attempt - 1))
+                            logger.warning(
+                                "Request failed: %s. Retrying in %.1f seconds... "
+                                "(attempt %s/%s)",
+                                e,
+                                delay,
+                                attempt,
+                                self.max_retries,
+                            )
+                            await asyncio.sleep(delay)
+                        else:
+                            logger.error("Max retries (%s) exceeded", self.max_retries)
+                            raise
+
+                raise NetworkError(999, "Max retries exceeded")
+            finally:
+                self._active_requests -= 1
 
     async def _make_single_request(
         self, url: str, params: Dict[str, Any], search_type: str = "web"
@@ -292,6 +297,20 @@ class AsyncBaseClient:
                     f"Yandex: {DAILY_LIMITS['yandex']:,} запросов в день"
                 ),
             },
+        }
+
+    def get_concurrent_status(self) -> Dict[str, Any]:
+        """
+        Получение информации о текущем состоянии семафора
+
+        Returns:
+            Словарь с информацией о семафоре
+        """
+        return {
+            "max_concurrent": self.max_concurrent,
+            "active_requests": self._active_requests,
+            "available_slots": self.max_concurrent - self._active_requests,
+            "semaphore_value": self._semaphore._value,
         }
 
     async def close(self):

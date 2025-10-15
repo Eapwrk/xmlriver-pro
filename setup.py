@@ -14,7 +14,7 @@ def read_readme():
 
 setup(
     name="xmlriver-pro",
-    version="1.2.4",
+    version="1.2.5",
     author="XMLRiver Pro Team",
     author_email="support@xmlriver.com",
     description="Professional Python client for XMLRiver API with full coverage",

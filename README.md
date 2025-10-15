@@ -185,6 +185,10 @@ async with AsyncGoogleClient(
     max_concurrent=8
 ) as client:
     result = await client.search("python")
+    
+    # Проверка состояния семафора
+    status = client.get_concurrent_status()
+    print(f"Active requests: {status['active_requests']}/{status['max_concurrent']}")
 ```
 
 ## 🚀 Быстрый старт
