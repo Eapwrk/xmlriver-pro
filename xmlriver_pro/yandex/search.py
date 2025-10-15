@@ -61,7 +61,7 @@ class YandexSearch(BaseClient):
         params.update(kwargs)
 
         response = self._make_request(self.BASE_URL, params)
-        return self._parse_results(response)
+        return self._parse_results(response, query)
 
     def search_with_time_filter(
         self, query: str, within: int, **kwargs

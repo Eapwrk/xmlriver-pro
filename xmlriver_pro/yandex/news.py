@@ -62,9 +62,9 @@ class YandexNews(BaseClient):
         params.update(kwargs)
 
         response = self._make_request(self.BASE_URL, params)
-        return self._parse_news_results(response)
+        return self._parse_news_results(response, query)
 
-    def _parse_news_results(self, response: dict) -> SearchResponse:
+    def _parse_news_results(self, response: dict, query: str = "") -> SearchResponse:
         """Парсинг результатов поиска новостей"""
         found = response.get("found", {})
         total = int(found.get("#text", 0)) if isinstance(found, dict) else 0
@@ -87,7 +87,7 @@ class YandexNews(BaseClient):
             results.append(result)
 
         return SearchResponse(
-            query=response.get("query", ""),
+            query=response.get("query", query),
             total_results=total,
             results=results,
             showing_results_for=response.get("showing_results_for"),

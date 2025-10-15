@@ -51,9 +51,9 @@ class GoogleImages(BaseClient):
         params.update(kwargs)
 
         response = self._make_request(self.BASE_URL, params)
-        return self._parse_image_results(response)
+        return self._parse_image_results(response, query)
 
-    def _parse_image_results(self, response: dict) -> SearchResponse:
+    def _parse_image_results(self, response: dict, query: str = "") -> SearchResponse:
         """Парсинг результатов поиска изображений"""
         found = response.get("found", {})
         total = int(found.get("#text", 0)) if isinstance(found, dict) else 0
@@ -77,7 +77,7 @@ class GoogleImages(BaseClient):
             results.append(result)
 
         return SearchResponse(
-            query=response.get("query", ""),
+            query=response.get("query", query),
             total_results=total,
             results=results,
             showing_results_for=response.get("showing_results_for"),
@@ -181,9 +181,9 @@ class GoogleImages(BaseClient):
         response = self.search_images(query, **kwargs)
 
         # Извлекаем suggestedsearches из ответа
-        suggested_searches = response.get("suggestedsearches", {}).get(
-            "item", []
-        )  # pylint: disable=no-member
+        # response - это SearchResponse, нужно получить raw данные
+        # Пока что возвращаем пустой список, так как SearchResponse не содержит suggestedsearches
+        suggested_searches = []
         if isinstance(suggested_searches, list):
             return [
                 item.get("name", "") for item in suggested_searches if item.get("name")

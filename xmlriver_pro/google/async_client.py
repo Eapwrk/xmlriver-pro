@@ -378,13 +378,13 @@ class AsyncGoogleClient(AsyncBaseClient):
                     title=item.get("title", ""),
                     snippet=item.get("snippet", ""),
                 )
-            else:  # web
-                return SearchResult(
-                    rank=int(item.get("position", 0)),
-                    title=item.get("title", ""),
-                    url=item.get("url", ""),
-                    snippet=item.get("snippet", ""),
-                )
+            # web
+            return SearchResult(
+                rank=int(item.get("position", 0)),
+                title=item.get("title", ""),
+                url=item.get("url", ""),
+                snippet=item.get("snippet", ""),
+            )
         except (ValueError, KeyError) as _:
             # Логируем ошибку и возвращаем None
             return None

@@ -177,14 +177,18 @@ class AsyncBaseClient:
 
                 # Читаем и парсим ответ
                 text = await resp.text()
-                return await self._parse_response(text, search_type)
+                return await self._parse_response(
+                    text, search_type, params.get("query", "")
+                )
 
         except aiohttp.ClientError as e:
             raise NetworkError(999, f"Network error: {e}") from e
         except asyncio.TimeoutError:
             raise NetworkError(999, f"Request timeout after {self.timeout}s") from None
 
-    async def _parse_response(self, xml_text: str, search_type: str) -> SearchResponse:
+    async def _parse_response(
+        self, xml_text: str, search_type: str, query: str = ""
+    ) -> SearchResponse:
         """
         Парсинг XML ответа от API
 
@@ -214,7 +218,7 @@ class AsyncBaseClient:
 
             # Создаем SearchResponse
             return SearchResponse(
-                query=response_data.get("query", ""),
+                query=response_data.get("query", query),
                 total_results=int(response_data.get("total", 0)),
                 results=self._extract_results(response_data, search_type),
             )

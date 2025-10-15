@@ -162,7 +162,9 @@ class BaseClient:
         logger.warning("HTTP %s", response.status_code)
         raise NetworkError(response.status_code, f"HTTP {response.status_code}")
 
-    def _parse_results(self, response: Dict[str, Any]) -> SearchResponse:
+    def _parse_results(
+        self, response: Dict[str, Any], query: str = ""
+    ) -> SearchResponse:
         """
         Парсинг результатов поиска
 
@@ -198,7 +200,7 @@ class BaseClient:
             results.append(result)
 
         return SearchResponse(
-            query=response.get("query", ""),
+            query=response.get("query", query),
             total_results=total,
             results=results,
             showing_results_for=response.get("showing_results_for"),

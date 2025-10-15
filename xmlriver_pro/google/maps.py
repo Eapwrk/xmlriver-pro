@@ -65,9 +65,9 @@ class GoogleMaps(BaseClient):
         params.update(kwargs)
 
         response = self._make_request(self.BASE_URL, params)
-        return self._parse_maps_results(response)
+        return self._parse_maps_results(response, query)
 
-    def _parse_maps_results(self, response: dict) -> SearchResponse:
+    def _parse_maps_results(self, response: dict, query: str = "") -> SearchResponse:
         """Парсинг результатов поиска по картам"""
         found = response.get("found", {})
         total = int(found.get("#text", 0)) if isinstance(found, dict) else 0
@@ -100,17 +100,17 @@ class GoogleMaps(BaseClient):
             results.append(result)
 
         return SearchResponse(
-            query=response.get("query", ""),
+            query=response.get("query", query),
             total_results=total,
             results=results,
             showing_results_for=response.get("showing_results_for"),
         )
 
-    def _extract_stars(self, value) -> Optional[float]:
+    def _extract_stars(self, doc) -> Optional[float]:
         """Извлечение рейтинга"""
-        if value:
+        if doc:
             try:
-                return float(str(value).replace(",", "."))
+                return float(str(doc).replace(",", "."))
             except (ValueError, TypeError):
                 pass
         return None
