@@ -612,6 +612,4 @@ MIT License. Подробности в [LICENSE](LICENSE).
 
 **XMLRiver Pro** - Professional Python client for XMLRiver API
 
-*Made with ❤️ by [XMLRiver Pro Team](https://github.com/Eapwrk/xmlriver-pro)*
-
 </div>
