@@ -265,7 +265,7 @@ pytest -v
 
 ## Вклад в проект
 
-Приветствуем вклад в развитие! Создавайте Issues и Pull Requests на [GitHub](https://github.com/Eapwrk/xmlriver-pro).
+Приветствую вклад в развитие! Создавайте Issues и Pull Requests на [GitHub](https://github.com/Eapwrk/xmlriver-pro).
 
 ### Установка для разработки
 
