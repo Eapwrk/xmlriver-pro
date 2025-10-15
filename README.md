@@ -30,7 +30,13 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/Eapwrk/xmlriver-pro?color=blue)](https://github.com/Eapwrk/xmlriver-pro)
 [![GitHub issues](https://img.shields.io/github/issues/Eapwrk/xmlriver-pro?color=red)](https://github.com/Eapwrk/xmlriver-pro/issues)
 
-<h1 align="center">🌊 XMLRiver Pro 🚀</h1>
+```
+__  ____  __ _     ____  _                  ____            
+\ \/ /  \/  | |   |  _ \(_)_   _____ _ __  |  _ \ _ __ ___  
+ \  /| |\/| | |   | |_) | \ \ / / _ \ '__| | |_) | '__/ _ \ 
+ /  \| |  | | |___|  _ <| |\ V /  __/ |    |  __/| | | (_) |
+/_/\_\_|  |_|_____|_| \_\_| \_/ \___|_|    |_|   |_|  \___/ 
+```
 
 **Professional Python client for XMLRiver API with full coverage**
 
