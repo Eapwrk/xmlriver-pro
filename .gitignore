@@ -214,3 +214,6 @@ venv.bak/
 .DS_Store
 Thumbs.db
 .env
+
+# Internal security documents (not for public repo)
+SECURITY_CHECKLIST.md
