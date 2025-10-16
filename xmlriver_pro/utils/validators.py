@@ -286,6 +286,8 @@ def validate_image_size(size: str) -> bool:
     Returns:
         True если размер валиден
     """
+    if not isinstance(size, str):
+        return False
     valid_sizes = ["small", "medium", "large", "xlarge"]
     return size.lower() in valid_sizes
 
@@ -300,6 +302,8 @@ def validate_image_color(color: str) -> bool:
     Returns:
         True если цвет валиден
     """
+    if not isinstance(color, str):
+        return False
     valid_colors = [
         "any",
         "color",
@@ -331,6 +335,8 @@ def validate_image_type(image_type: str) -> bool:
     Returns:
         True если тип валиден
     """
+    if not isinstance(image_type, str):
+        return False
     valid_types = ["any", "face", "photo", "clipart", "lineart", "animated"]
     return image_type.lower() in valid_types
 
@@ -345,6 +351,8 @@ def validate_usage_rights(usage_rights: str) -> bool:
     Returns:
         True если права валидны
     """
+    if not isinstance(usage_rights, str):
+        return False
     valid_rights = [
         "any",
         "cc_publicdomain",

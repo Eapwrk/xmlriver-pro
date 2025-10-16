@@ -174,6 +174,19 @@ download_docs.py
 update_version.py
 create_release.py
 
+# Test files with real credentials (CRITICAL SECURITY)
+comprehensive_api_tests.py
+production_readiness_test.py
+test_with_env.py
+
+# Temporary development files
+architectural_fix_plan.md
+download_docs.py
+
+# Production test files
+*_production_test.py
+*_real_api_test.py
+
 # Build artifacts
 build/
 dist/

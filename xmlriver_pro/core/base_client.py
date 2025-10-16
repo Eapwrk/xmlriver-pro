@@ -324,6 +324,42 @@ class BaseClient:
             },
         }
 
+    def search(
+        self,
+        query: str,
+        groupby: int = 10,
+        page: int = 1,
+        device: str = "desktop",
+        **kwargs: Any,
+    ) -> SearchResponse:
+        """
+        Базовый метод поиска
+
+        Реализация по умолчанию для клиентов, которым нужен простой поиск.
+        Может быть переопределен в наследниках для специфичной логики.
+
+        Args:
+            query: Поисковый запрос
+            groupby: Количество результатов
+            page: Номер страницы
+            device: Тип устройства
+            **kwargs: Дополнительные параметры
+
+        Returns:
+            Результаты поиска
+        """
+        params = {
+            **self.base_params,
+            "query": query,
+            "groupby": groupby,
+            "page": page,
+            "device": device,
+        }
+        params.update(kwargs)
+
+        response = self._make_request(self.BASE_URL, params)
+        return self._parse_results(response, query)
+
     def check_indexing(self, url: str, strict: bool = False, **kwargs: Any) -> bool:
         """
         Проверить индексацию URL
@@ -340,7 +376,7 @@ class BaseClient:
         params.update(kwargs)
 
         try:
-            response = self.search(url, **params)  # pylint: disable=no-member
+            response = self.search(url, **params)
             return any(result.url == url for result in response.results)
         except NoResultsError:
             return False

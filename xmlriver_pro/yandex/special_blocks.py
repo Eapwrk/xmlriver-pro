@@ -30,7 +30,7 @@ class YandexSpecialBlocks(BaseClient):
         Returns:
             Список колдунщиков
         """
-        response = self.search(query, **kwargs)  # pylint: disable=no-member
+        response = self.search(query, **kwargs)
 
         searchsters = []
         for result in response.results:

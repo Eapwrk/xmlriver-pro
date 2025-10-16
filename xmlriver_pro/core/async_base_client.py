@@ -313,6 +313,39 @@ class AsyncBaseClient:
             "semaphore_value": self._semaphore._value,
         }
 
+    async def search(
+        self,
+        query: str,
+        groupby: int = 10,
+        page: int = 1,
+        device: str = "desktop",
+        **kwargs: Any,
+    ) -> SearchResponse:
+        """
+        Базовый асинхронный метод поиска
+
+        Args:
+            query: Поисковый запрос
+            groupby: Количество результатов
+            page: Номер страницы
+            device: Тип устройства
+            **kwargs: Дополнительные параметры
+
+        Returns:
+            Результаты поиска
+        """
+        params = {
+            **self.base_params,
+            "query": query,
+            "groupby": groupby,
+            "page": page,
+            "device": device,
+        }
+        params.update(kwargs)
+
+        response = await self._make_request(self.BASE_URL, params)
+        return self._parse_response(response, query)
+
     async def close(self):
         """Закрытие клиента и освобождение ресурсов"""
         if self._session and self._own_session:

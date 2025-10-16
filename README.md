@@ -410,14 +410,132 @@ kg = google_special.get_knowledge_graph("Python programming language")
 # Калькулятор
 calc_result = google_special.get_calculator("2 + 2")
 
+# Переводчик
+translation = google_special.get_translator("hello world")
+
+# Погода
+weather = google_special.get_weather("weather Moscow")
+
+# Конвертер валют
+currency = google_special.get_currency_converter("100 USD to EUR")
+
+# Время
+time_info = google_special.get_time("time in Moscow")
+
+# Блок ответов
+answer_box = google_special.get_answer_box("what is python")
+
 # Yandex колдунщики
 yandex_special = YandexSpecialBlocks(user_id=123, api_key="your_key")
+
+# Колдунщики поиска
+searchsters = yandex_special.get_searchsters("python", ["organic", "video"])
 
 # Погода
 weather = yandex_special.get_weather("погода Москва")
 
 # Переводчик
 translation = yandex_special.get_translator("hello world")
+
+# Конвертер валют
+currency = yandex_special.get_currency_converter("100 долларов в рубли")
+
+# Время
+time_info = yandex_special.get_time("время в Москве")
+
+# IP адрес
+ip_info = yandex_special.get_ip_address()
+
+# Карты
+maps_info = yandex_special.get_maps("кафе Москва")
+
+# Музыка
+music_info = yandex_special.get_music("python programming")
+
+# Цитаты
+quotes = yandex_special.get_quotes("python programming")
+
+# Факты
+facts = yandex_special.get_facts("python programming")
+```
+
+## 📊 Типы данных
+
+### Основные типы результатов
+
+```python
+from xmlriver_pro.core.types import (
+    SearchResult, NewsResult, ImageResult, MapResult, 
+    AdResult, AdsResponse, SearchResponse
+)
+
+# SearchResult - результат органического поиска
+result = SearchResult(
+    rank=1,
+    url="https://python.org",
+    title="Python Programming Language",
+    snippet="Python is a programming language...",
+    content_type="organic",
+    stars=4.8
+)
+
+# NewsResult - результат поиска новостей
+news = NewsResult(
+    rank=1,
+    url="https://news.example.com",
+    title="Python News",
+    snippet="Latest Python updates...",
+    pub_date="2024-01-15"
+)
+
+# ImageResult - результат поиска изображений
+image = ImageResult(
+    rank=1,
+    url="https://example.com/image.jpg",
+    title="Python Logo",
+    snippet="Official Python logo",
+    image_url="https://example.com/logo.png",
+    image_size="large"
+)
+
+# MapResult - результат поиска по картам
+map_result = MapResult(
+    rank=1,
+    url="https://maps.google.com/...",
+    title="Python Office",
+    snippet="Python Software Foundation office",
+    coords=(37.7749, -122.4194),
+    address="San Francisco, CA"
+)
+
+# AdResult - рекламный результат
+ad = AdResult(
+    rank=1,
+    url="https://ad.example.com",
+    title="Python Course",
+    snippet="Learn Python programming",
+    ad_type="top"
+)
+```
+
+### Перечисления (Enums)
+
+```python
+from xmlriver_pro.core.types import (
+    SearchType, TimeFilter, DeviceType, OSType
+)
+
+# Типы поиска
+search_type = SearchType.ORGANIC  # ORGANIC, NEWS, IMAGES, MAPS, ADS
+
+# Фильтры времени для новостей
+time_filter = TimeFilter.LAST_WEEK  # LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR
+
+# Типы устройств
+device = DeviceType.DESKTOP  # DESKTOP, MOBILE, TABLET
+
+# Операционные системы
+os_type = OSType.WINDOWS  # WINDOWS, MACOS, LINUX, ANDROID, IOS
 ```
 
 ## 🔧 Расширенные возможности
@@ -439,6 +557,112 @@ if validate_zoom(12):
 # Валидация URL
 if validate_url("https://python.org"):
     # URL валиден
+```
+
+### 🔍 Расширенные методы поиска
+
+```python
+# Google расширенные методы
+google = GoogleClient(user_id=123, api_key="your_key")
+
+# Поиск с фильтром времени
+results = google.search_with_time_filter("python", TimeFilter.LAST_WEEK)
+
+# Поиск без автокоррекции
+results = google.search_without_correction("pythn programming")
+
+# Поиск с подсветкой
+results = google.search_with_highlights("python programming")
+
+# Поиск без фильтров
+results = google.search_without_filter("python programming")
+
+# Yandex расширенные методы
+yandex = YandexClient(user_id=123, api_key="your_key")
+
+# Поиск с фильтром времени (в днях)
+results = yandex.search_with_time_filter("python", within=7)
+
+# Поиск с подсветкой
+results = yandex.search_with_highlights("python programming")
+
+# Поиск с фильтрами
+results = yandex.search_with_filter("python programming")
+
+# Поиск по сайту
+results = yandex.search_site("python.org", "programming")
+
+# Поиск точной фразы
+results = yandex.search_exact_phrase("python programming language")
+
+# Поиск с исключением слов
+results = yandex.search_exclude_words("python programming", ["tutorial", "course"])
+
+# Поиск в заголовке
+results = yandex.search_in_title("python programming")
+
+# Поиск в URL
+results = yandex.search_in_url("python.org")
+```
+
+### 🗺️ Специальные методы карт
+
+```python
+from xmlriver_pro import GoogleMaps
+
+maps = GoogleMaps(user_id=123, api_key="your_key")
+
+# Поиск ресторанов рядом
+restaurants = maps.search_restaurants(
+    coords=(55.7558, 37.6176), 
+    query="ресторан"
+)
+
+# Поиск отелей
+hotels = maps.search_hotels(
+    coords=(55.7558, 37.6176)
+)
+
+# Поиск заправок
+gas_stations = maps.search_gas_stations(
+    coords=(55.7558, 37.6176)
+)
+
+# Поиск аптек
+pharmacies = maps.search_pharmacies(
+    coords=(55.7558, 37.6176)
+)
+```
+
+### 🖼️ Специальные методы изображений
+
+```python
+from xmlriver_pro import GoogleImages
+
+images = GoogleImages(user_id=123, api_key="your_key")
+
+# Получение предложенных поисков
+suggestions = images.get_suggested_searches("python logo")
+```
+
+### 📰 Специальные методы новостей
+
+```python
+from xmlriver_pro import YandexNews
+
+news = YandexNews(user_id=123, api_key="your_key")
+
+# Поиск новостей по региону
+results = news.search_news_by_region("python", region_id=213)
+
+# Поиск новостей по языку
+results = news.search_news_by_language("python", language="en")
+
+# Поиск новостей по домену
+results = news.search_news_by_domain("python", domain="python.org")
+
+# Получение трендов
+trends = news.get_news_trends("python programming")
 ```
 
 ### 📝 Форматирование результатов

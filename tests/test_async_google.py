@@ -6,7 +6,13 @@ import pytest
 import asyncio
 from unittest.mock import AsyncMock, patch, MagicMock
 from xmlriver_pro import AsyncGoogleClient
-from xmlriver_pro.core.types import SearchType, DeviceType, OSType, SearchResponse, SearchResult
+from xmlriver_pro.core.types import (
+    SearchType,
+    DeviceType,
+    OSType,
+    SearchResponse,
+    SearchResult,
+)
 from xmlriver_pro.core.exceptions import ValidationError, RateLimitError, NetworkError
 
 
@@ -222,7 +228,7 @@ class TestAsyncGoogleClientRetry:
     def test_retry_configuration_defaults(self):
         """Тест конфигурации retry по умолчанию"""
         client = AsyncGoogleClient(user_id=123, api_key="test_key")
-        
+
         assert client.timeout == 60
         assert client.max_retries == 3
         assert client.retry_delay == 1.0
@@ -231,15 +237,17 @@ class TestAsyncGoogleClientRetry:
     def test_retry_configuration_custom(self):
         """Тест кастомной конфигурации retry"""
         client = AsyncGoogleClient(
-            user_id=123, 
+            user_id=123,
             api_key="test_key",
             timeout=120,
             max_retries=5,
             retry_delay=2.0,
-            enable_retry=False
+            enable_retry=False,
         )
-        
-        assert client.timeout == 60  # Максимум 60, но передали 120 - должно быть ограничено
+
+        assert (
+            client.timeout == 60
+        )  # Максимум 60, но передали 120 - должно быть ограничено
         assert client.max_retries == 5
         assert client.retry_delay == 2.0
         assert client.enable_retry is False
@@ -247,24 +255,29 @@ class TestAsyncGoogleClientRetry:
     @pytest.mark.asyncio
     async def test_retry_disabled(self):
         """Тест отключенного retry"""
-        client = AsyncGoogleClient(
-            user_id=123, 
-            api_key="test_key", 
-            enable_retry=False
-        )
-        
-        with patch("xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request") as mock_single_request:
+        client = AsyncGoogleClient(user_id=123, api_key="test_key", enable_retry=False)
+
+        with patch(
+            "xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request"
+        ) as mock_single_request:
             # Мокаем успешный ответ
             mock_response = SearchResponse(
                 query="test",
                 total_results=10,
-                results=[SearchResult(rank=1, title="Test", url="http://test.com", snippet="Test snippet")]
+                results=[
+                    SearchResult(
+                        rank=1,
+                        title="Test",
+                        url="http://test.com",
+                        snippet="Test snippet",
+                    )
+                ],
             )
             mock_single_request.return_value = mock_response
-            
+
             async with client:
                 result = await client.search("test")
-            
+
             # Должен быть только один вызов без повторов
             mock_single_request.assert_called_once()
             assert result is not None
@@ -273,57 +286,68 @@ class TestAsyncGoogleClientRetry:
     async def test_retry_with_exponential_backoff(self):
         """Тест retry с экспоненциальным backoff"""
         client = AsyncGoogleClient(
-            user_id=123, 
+            user_id=123,
             api_key="test_key",
             max_retries=3,
-            retry_delay=0.1  # Быстрый тест
+            retry_delay=0.1,  # Быстрый тест
         )
-        
-        with patch("xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request") as mock_single_request:
+
+        with patch(
+            "xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request"
+        ) as mock_single_request:
             with patch("asyncio.sleep") as mock_sleep:
                 # Первые два вызова падают, третий успешен
                 mock_response = SearchResponse(
                     query="test",
                     total_results=10,
-                    results=[SearchResult(rank=1, title="Test", url="http://test.com", snippet="Test snippet")]
+                    results=[
+                        SearchResult(
+                            rank=1,
+                            title="Test",
+                            url="http://test.com",
+                            snippet="Test snippet",
+                        )
+                    ],
                 )
                 mock_single_request.side_effect = [
                     NetworkError(999, "Network error"),
-                    NetworkError(999, "Network error"), 
-                    mock_response
+                    NetworkError(999, "Network error"),
+                    mock_response,
                 ]
-                
+
                 async with client:
                     result = await client.search("test")
-                
+
                 # Проверяем количество вызовов
                 assert mock_single_request.call_count == 3
-                
+
                 # Проверяем задержки: 0.1, 0.2 секунды
                 expected_delays = [0.1, 0.2]
                 actual_delays = [call[0][0] for call in mock_sleep.call_args_list]
                 assert actual_delays == expected_delays
-                
+
                 assert result is not None
 
     @pytest.mark.asyncio
     async def test_retry_max_attempts_exceeded(self):
         """Тест превышения максимального количества попыток"""
         client = AsyncGoogleClient(
-            user_id=123, 
+            user_id=123,
             api_key="test_key",
             max_retries=2,
-            retry_delay=0.01  # Быстрый тест
+            retry_delay=0.01,  # Быстрый тест
         )
-        
-        with patch("xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request") as mock_single_request:
+
+        with patch(
+            "xmlriver_pro.core.async_base_client.AsyncBaseClient._make_single_request"
+        ) as mock_single_request:
             with patch("asyncio.sleep") as mock_sleep:
                 # Все попытки падают
                 mock_single_request.side_effect = NetworkError(999, "Persistent error")
-                
+
                 async with client:
                     with pytest.raises(NetworkError, match="Persistent error"):
                         await client.search("test")
-                
+
                 # Проверяем количество попыток
                 assert mock_single_request.call_count == 2
