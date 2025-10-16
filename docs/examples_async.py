@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Примеры асинхронного использования XMLRiver Pro API
+
+[← Назад к README](../README.md) • [Документация](README.md)
 """
 
 import asyncio

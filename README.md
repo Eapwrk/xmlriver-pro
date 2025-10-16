@@ -28,7 +28,7 @@
 [![Downloads](https://img.shields.io/pypi/dm/xmlriver-pro?color=orange)](https://pypi.org/project/xmlriver-pro/)
 [![Coverage](https://img.shields.io/badge/coverage-57%25-brightgreen.svg)](https://github.com/Eapwrk/xmlriver-pro)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Eapwrk/xmlriver-pro?color=blue)](https://github.com/Eapwrk/xmlriver-pro)
-[![GitHub issues](https://img.shields.io/github/issues/Eapwrk/xmlriver-pro?color=red)](https://github.com/Eapwrk/xmlriver-pro/issues)
+[![GitHub issues](https://img.shields.io/badge/github-issues-red?style=social)](https://github.com/Eapwrk/xmlriver-pro/issues)
 
 ```
 __  ____  __ _     ____  _                  ____            
@@ -97,366 +97,202 @@ XMLRiver Pro — это **профессиональная** Python библио
 pip install xmlriver-pro
 
 # Установка конкретной версии
-pip install xmlriver-pro==1.1.1
-
-# Обновление до последней версии
-pip install --upgrade xmlriver-pro
+pip install xmlriver-pro==1.2.7
 ```
 
-### 🚀 **Из GitHub:**
-```bash
-# Установка последней версии
-pip install git+https://github.com/Eapwrk/xmlriver-pro.git
-
-# Установка конкретной версии
-pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v1.1.1
-
-# Обновление до последней версии
-pip install --upgrade git+https://github.com/Eapwrk/xmlriver-pro.git
-```
-
-### 🔍 **Проверка версии:**
-```bash
-python -c "import xmlriver_pro; print(xmlriver_pro.__version__)"
-```
-
-## 🔄 Обновления
-
-### 📋 **Как узнать об обновлениях:**
-- ⭐ **Watch репозиторий** на GitHub для уведомлений
-- 📧 **Email:** seo@controlseo.ru
-- 🐛 **Issues:** [GitHub Issues](https://github.com/Eapwrk/xmlriver-pro/issues)
-- 💬 **Discussions:** [GitHub Discussions](https://github.com/Eapwrk/xmlriver-pro/discussions)
-
-### 📚 **История изменений:**
-- 📄 **CHANGELOG.md** - полная история изменений
-- 🏷️ **GitHub Releases** - релизы с описанием
-- 🔄 **Semantic Versioning** - мажорные.минорные.патч версии
-
-### 🚀 **Как обновляться:**
-```bash
-# Проверить текущую версию
-pip show xmlriver-pro
-
-# Обновить до последней версии
-pip install --upgrade xmlriver-pro
-
-# Обновить до конкретной версии
-pip install xmlriver-pro==1.1.0
-```
-
-Для разработки:
+### 🔧 **Из исходного кода:**
 ```bash
 git clone https://github.com/Eapwrk/xmlriver-pro.git
 cd xmlriver-pro
 pip install -e .
 ```
 
-## 🔧 Зависимости
-
-### Основные:
-- **requests** - HTTP запросы к API
-- **xmltodict** - парсинг XML ответов
-- **aiohttp** - асинхронные HTTP запросы
-
-### Для разработки:
-- **pytest** - тестирование
-- **black** - форматирование кода
-- **pylint** - анализ кода
-- **mypy** - проверка типов
-
-## ⚙️ Конфигурация
-
-### Переменные окружения
-
-Для удобства тестирования и разработки можно использовать переменные окружения:
-
-```bash
-# Создайте файл .env в корне проекта
-XMLRIVER_USER_ID=6881
-XMLRIVER_API_KEY=your_api_key_here
-```
-
-```python
-import os
-from dotenv import load_dotenv
-
-# Загружаем переменные окружения
-load_dotenv()
-
-# Используем в коде
-user_id = int(os.getenv("XMLRIVER_USER_ID", "0"))
-api_key = os.getenv("XMLRIVER_API_KEY", "")
-
-client = GoogleClient(user_id, api_key)
-```
-
-Все клиенты поддерживают настройку retry механизма и таймаутов:
-
-### Параметры конфигурации:
-
-| Параметр | Тип | По умолчанию | Описание |
-|----------|-----|--------------|----------|
-| `timeout` | `int` | `60` | Таймаут запроса в секундах (максимум 60) |
-| `max_retries` | `int` | `3` | Максимальное количество попыток повтора |
-| `retry_delay` | `float` | `1.0` | Базовая задержка между попытками в секундах |
-| `enable_retry` | `bool` | `True` | Включить автоматические повторы |
-| `max_concurrent` | `int` | `10` | Максимум одновременных запросов (жесткое ограничение) |
-
-### Экспоненциальный backoff:
-
-При включенном retry используется экспоненциальная задержка:
-- 1-я попытка: `retry_delay * 1` = 1.0 сек
-- 2-я попытка: `retry_delay * 2` = 2.0 сек  
-- 3-я попытка: `retry_delay * 4` = 4.0 сек
-- 4-я попытка: `retry_delay * 8` = 8.0 сек
-
-### Примеры конфигурации:
-
-```python
-# Стандартная конфигурация (рекомендуется)
-client = GoogleClient(user_id=123, api_key="key")
-
-# Кастомные настройки retry
-client = GoogleClient(
-    user_id=123, 
-    api_key="key",
-    timeout=120,        # 2 минуты
-    max_retries=5,      # 5 попыток
-    retry_delay=2.0,    # базовая задержка 2 сек
-    max_concurrent=5    # максимум 5 одновременных запросов
-)
-
-# Отключить retry для продвинутых пользователей
-client = GoogleClient(
-    user_id=123, 
-    api_key="key",
-    enable_retry=False  # без повторов
-)
-
-# Асинхронный клиент с настройками
-async with AsyncGoogleClient(
-    user_id=123,
-    api_key="key", 
-    max_retries=3,
-    retry_delay=1.5,
-    max_concurrent=8
-) as client:
-    result = await client.search("python")
-    
-    # Проверка состояния семафора
-    status = client.get_concurrent_status()
-    print(f"Active requests: {status['active_requests']}/{status['max_concurrent']}")
-```
+### 📋 **Зависимости:**
+- Python 3.10+
+- requests
+- aiohttp (для асинхронных клиентов)
+- xmltodict
+- python-dotenv
 
 ## 🚀 Быстрый старт
 
+### 🔑 Получение API ключей
+
+1. Зарегистрируйтесь на [xmlriver.com](https://xmlriver.com)
+2. Получите `user_id` и `api_key` в личном кабинете
+3. Пополните баланс для использования API
+
+### 🔧 Переменные окружения
+
+Создайте файл `.env`:
+```bash
+XMLRIVER_USER_ID=your_user_id_here
+XMLRIVER_API_KEY=your_api_key_here
+```
+
+### 📝 Базовые примеры
+
+#### Синхронный поиск
 ```python
 from xmlriver_pro import GoogleClient, YandexClient
 
-# Инициализация клиентов
-google = GoogleClient(user_id=123, api_key="your_google_key")
-yandex = YandexClient(user_id=123, api_key="your_yandex_key")
+# Google поиск
+google = GoogleClient(user_id=123, api_key="your_key")
+results = google.search("python programming")
+print(f"Найдено: {results.total_results} результатов")
 
-# Органический поиск
-google_results = google.search("python programming")
-yandex_results = yandex.search("программирование на python")
-
-# Результаты поиска
-google_count = google_results.total_results
-yandex_count = yandex_results.total_results
+# Yandex поиск
+yandex = YandexClient(user_id=123, api_key="your_key")
+results = yandex.search("программирование python")
+print(f"Найдено: {results.total_results} результатов")
 ```
 
-## ⚡ Асинхронное использование
-
-### Базовый асинхронный поиск
-
+#### Асинхронный поиск
 ```python
 import asyncio
 from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
 
 async def main():
-    # Google поиск
-    async with AsyncGoogleClient(user_id=123, api_key="your_google_key") as google:
+    # Google асинхронный поиск
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
         results = await google.search("python programming")
-        print(f"Google: {results.total_results} результатов")
+        print(f"Найдено: {results.total_results} результатов")
     
-    # Yandex поиск
-    async with AsyncYandexClient(user_id=123, api_key="your_yandex_key") as yandex:
-        results = await yandex.search("программирование на python")
-        print(f"Yandex: {results.total_results} результатов")
+    # Yandex асинхронный поиск
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
+        results = await yandex.search("программирование python")
+        print(f"Найдено: {results.total_results} результатов")
 
-# Запуск
 asyncio.run(main())
 ```
 
-### Параллельные запросы
-
-```python
-import asyncio
-from xmlriver_pro import AsyncGoogleClient
-
-async def parallel_search():
-    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
-        # Создаем задачи для параллельного выполнения
-        tasks = [
-            google.search("python programming"),
-            google.search("machine learning"),
-            google.search("data science")
-        ]
-        
-        # Выполняем все задачи параллельно
-        results = await asyncio.gather(*tasks)
-        
-        for i, result in enumerate(results):
-            print(f"Запрос {i+1}: {result.total_results} результатов")
-
-asyncio.run(parallel_search())
-```
-
-### Смешанный поиск Google + Yandex
-
-```python
-import asyncio
-from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
-
-async def mixed_search():
-    query = "программирование на python"
-    
-    async with AsyncGoogleClient(user_id=123, api_key="google_key") as google, \
-             AsyncYandexClient(user_id=123, api_key="yandex_key") as yandex:
-        
-        # Поиск в обеих системах параллельно
-        google_task = google.search(query)
-        yandex_task = yandex.search(query)
-        
-        google_results, yandex_results = await asyncio.gather(
-            google_task, yandex_task
-        )
-        
-        print(f"Google: {google_results.total_results} результатов")
-        print(f"Yandex: {yandex_results.total_results} результатов")
-
-asyncio.run(mixed_search())
-```
-
-### 📰 Поиск по новостям
-
+#### Поиск новостей
 ```python
 from xmlriver_pro import GoogleNews, YandexNews
 from xmlriver_pro.core.types import TimeFilter
 
+# Google новости
 google_news = GoogleNews(user_id=123, api_key="your_key")
-news_results = google_news.search_news("python", time_filter=TimeFilter.LAST_WEEK)
+results = google_news.search_news("python", TimeFilter.LAST_WEEK)
 
+# Yandex новости
 yandex_news = YandexNews(user_id=123, api_key="your_key")
-yandex_news_results = yandex_news.search_news_last_day("python новости")
+results = yandex_news.search_news("python", within=7)  # За неделю
 ```
 
-### 🖼️ Поиск по изображениям
-
+#### Поиск изображений
 ```python
 from xmlriver_pro import GoogleImages
 
 images = GoogleImages(user_id=123, api_key="your_key")
-
-image_results = images.search_images("python logo", count=20)
-large_images = images.search_images_by_size("python logo", "large")
-color_images = images.search_images_by_color("python logo", "blue")
+results = images.search_images("python logo", count=20)
 ```
 
-### 🗺️ Поиск по картам
-
+#### Поиск по картам
 ```python
 from xmlriver_pro import GoogleMaps
+from xmlriver_pro.core.types import Coords
 
 maps = GoogleMaps(user_id=123, api_key="your_key")
-
-map_results = maps.search_maps(
-    query="кафе Москва",
-    zoom=12,
-    coords=(55.7558, 37.6176)
+results = maps.search_maps(
+    "python office",
+    coords=Coords(latitude=37.7749, longitude=-122.4194),
+    zoom=12
 )
-
-nearby_cafes = maps.search_nearby("кафе", coords=(55.7558, 37.6176), radius=1000)
 ```
 
-### 📢 Рекламные блоки
-
+#### Рекламные блоки
 ```python
 from xmlriver_pro import GoogleAds, YandexAds
 
+# Google реклама
 google_ads = GoogleAds(user_id=123, api_key="your_key")
-ads_response = google_ads.get_ads("python programming")
+ads = google_ads.get_ads("python programming")
 
+# Yandex реклама
 yandex_ads = YandexAds(user_id=123, api_key="your_key")
-yandex_ads_response = yandex_ads.get_ads("программирование python")
+ads = yandex_ads.get_ads("программирование python")
 ```
 
-### 🧩 Специальные блоки
+## 🔧 Конфигурация
 
+### Основные параметры
+
+| Параметр | Описание | По умолчанию |
+|----------|----------|--------------|
+| `user_id` | ID пользователя XMLRiver | Обязательный |
+| `api_key` | API ключ XMLRiver | Обязательный |
+| `timeout` | Таймаут запроса (сек) | 60 |
+| `retry_count` | Количество повторов | 3 |
+| `retry_delay` | Задержка между повторами (сек) | 1.0 |
+| `max_concurrent` | Максимум одновременных запросов | 10 |
+
+### Пример конфигурации
 ```python
-from xmlriver_pro import GoogleSpecialBlocks, YandexSpecialBlocks
+from xmlriver_pro import GoogleClient
 
-# Google специальные блоки
-google_special = GoogleSpecialBlocks(user_id=123, api_key="your_key")
+client = GoogleClient(
+    user_id=123,
+    api_key="your_key",
+    timeout=60,           # 60 секунд таймаут
+    retry_count=3,        # 3 попытки
+    retry_delay=1.0,      # 1 секунда между попытками
+    max_concurrent=5      # 5 одновременных запросов
+)
+```
 
-# OneBox документы
-onebox_docs = google_special.get_onebox_documents("python", ["organic", "video"])
+### Переменные окружения
+```python
+import os
+from dotenv import load_dotenv
+from xmlriver_pro import GoogleClient
 
-# Knowledge Graph
-kg = google_special.get_knowledge_graph("Python programming language")
+load_dotenv()
 
-# Калькулятор
-calc_result = google_special.get_calculator("2 + 2")
+client = GoogleClient(
+    user_id=int(os.getenv("XMLRIVER_USER_ID")),
+    api_key=os.getenv("XMLRIVER_API_KEY")
+)
+```
 
-# Переводчик
-translation = google_special.get_translator("hello world")
+## 💡 Примеры использования
 
-# Погода
-weather = google_special.get_weather("weather Moscow")
+### Мониторинг потоков (асинхронные клиенты)
+```python
+async with AsyncGoogleClient(user_id=123, api_key="your_key") as client:
+    # Проверяем статус потоков
+    status = client.get_concurrent_status()
+    print(f"Активных запросов: {status['active_requests']}")
+    print(f"Доступных слотов: {status['available_slots']}")
+```
 
-# Конвертер валют
-currency = google_special.get_currency_converter("100 USD to EUR")
+### Основные валидаторы
+```python
+from xmlriver_pro.utils import validate_coords, validate_zoom, validate_url
 
-# Время
-time_info = google_special.get_time("time in Moscow")
+# Валидация координат
+coords = (55.7558, 37.6176)
+if validate_coords(coords):
+    print("Координаты валидны")
 
-# Блок ответов
-answer_box = google_special.get_answer_box("what is python")
+# Валидация zoom
+if validate_zoom(12):
+    print("Zoom валиден")
 
-# Yandex колдунщики
-yandex_special = YandexSpecialBlocks(user_id=123, api_key="your_key")
+# Валидация URL
+if validate_url("https://python.org"):
+    print("URL валиден")
+```
 
-# Колдунщики поиска
-searchsters = yandex_special.get_searchsters("python", ["organic", "video"])
+### Основные форматтеры
+```python
+from xmlriver_pro.utils import format_search_response, format_ads_response
 
-# Погода
-weather = yandex_special.get_weather("погода Москва")
+# Форматирование результатов поиска
+formatted_results = format_search_response(search_results)
 
-# Переводчик
-translation = yandex_special.get_translator("hello world")
-
-# Конвертер валют
-currency = yandex_special.get_currency_converter("100 долларов в рубли")
-
-# Время
-time_info = yandex_special.get_time("время в Москве")
-
-# IP адрес
-ip_info = yandex_special.get_ip_address()
-
-# Карты
-maps_info = yandex_special.get_maps("кафе Москва")
-
-# Музыка
-music_info = yandex_special.get_music("python programming")
-
-# Цитаты
-quotes = yandex_special.get_quotes("python programming")
-
-# Факты
-facts = yandex_special.get_facts("python programming")
+# Форматирование рекламных блоков
+formatted_ads = format_ads_response(ads_response)
 ```
 
 ## 📊 Типы данных
@@ -538,146 +374,7 @@ device = DeviceType.DESKTOP  # DESKTOP, MOBILE, TABLET
 os_type = OSType.WINDOWS  # WINDOWS, MACOS, LINUX, ANDROID, IOS
 ```
 
-## 🔧 Расширенные возможности
-
-### ✔️ Валидация параметров
-
-```python
-from xmlriver_pro.utils import validate_coords, validate_zoom, validate_url
-
-# Валидация координат
-coords = (55.7558, 37.6176)
-if validate_coords(coords):
-    # Координаты валидны
-
-# Валидация zoom
-if validate_zoom(12):
-    # Zoom валиден
-
-# Валидация URL
-if validate_url("https://python.org"):
-    # URL валиден
-```
-
-### 🔍 Расширенные методы поиска
-
-```python
-# Google расширенные методы
-google = GoogleClient(user_id=123, api_key="your_key")
-
-# Поиск с фильтром времени
-results = google.search_with_time_filter("python", TimeFilter.LAST_WEEK)
-
-# Поиск без автокоррекции
-results = google.search_without_correction("pythn programming")
-
-# Поиск с подсветкой
-results = google.search_with_highlights("python programming")
-
-# Поиск без фильтров
-results = google.search_without_filter("python programming")
-
-# Yandex расширенные методы
-yandex = YandexClient(user_id=123, api_key="your_key")
-
-# Поиск с фильтром времени (в днях)
-results = yandex.search_with_time_filter("python", within=7)
-
-# Поиск с подсветкой
-results = yandex.search_with_highlights("python programming")
-
-# Поиск с фильтрами
-results = yandex.search_with_filter("python programming")
-
-# Поиск по сайту
-results = yandex.search_site("python.org", "programming")
-
-# Поиск точной фразы
-results = yandex.search_exact_phrase("python programming language")
-
-# Поиск с исключением слов
-results = yandex.search_exclude_words("python programming", ["tutorial", "course"])
-
-# Поиск в заголовке
-results = yandex.search_in_title("python programming")
-
-# Поиск в URL
-results = yandex.search_in_url("python.org")
-```
-
-### 🗺️ Специальные методы карт
-
-```python
-from xmlriver_pro import GoogleMaps
-
-maps = GoogleMaps(user_id=123, api_key="your_key")
-
-# Поиск ресторанов рядом
-restaurants = maps.search_restaurants(
-    coords=(55.7558, 37.6176), 
-    query="ресторан"
-)
-
-# Поиск отелей
-hotels = maps.search_hotels(
-    coords=(55.7558, 37.6176)
-)
-
-# Поиск заправок
-gas_stations = maps.search_gas_stations(
-    coords=(55.7558, 37.6176)
-)
-
-# Поиск аптек
-pharmacies = maps.search_pharmacies(
-    coords=(55.7558, 37.6176)
-)
-```
-
-### 🖼️ Специальные методы изображений
-
-```python
-from xmlriver_pro import GoogleImages
-
-images = GoogleImages(user_id=123, api_key="your_key")
-
-# Получение предложенных поисков
-suggestions = images.get_suggested_searches("python logo")
-```
-
-### 📰 Специальные методы новостей
-
-```python
-from xmlriver_pro import YandexNews
-
-news = YandexNews(user_id=123, api_key="your_key")
-
-# Поиск новостей по региону
-results = news.search_news_by_region("python", region_id=213)
-
-# Поиск новостей по языку
-results = news.search_news_by_language("python", language="en")
-
-# Поиск новостей по домену
-results = news.search_news_by_domain("python", domain="python.org")
-
-# Получение трендов
-trends = news.get_news_trends("python programming")
-```
-
-### 📝 Форматирование результатов
-
-```python
-from xmlriver_pro.utils import format_search_response, format_ads_response
-
-# Форматирование результатов поиска
-formatted_results = format_search_response(search_results)
-
-# Форматирование рекламных блоков
-formatted_ads = format_ads_response(ads_response)
-```
-
-### ⚠️ Обработка ошибок
+## ⚠️ Обработка ошибок
 
 ```python
 from xmlriver_pro.core import (
@@ -782,9 +479,16 @@ pytest -v
 
 ## 📚 Документация
 
-- [README.md](README.md) - основная документация
-- [docs/examples.md](docs/examples.md) - примеры использования
-- [Исходный код](https://github.com/Eapwrk/xmlriver-pro) - полный код с комментариями
+- **[README.md](README.md)** - основная документация (этот файл)
+- **[docs/README.md](docs/README.md)** - обзор всей документации
+- **[docs/examples.md](docs/examples.md)** - детальные примеры всех методов
+- **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - полный справочник API
+- **[docs/ADVANCED_USAGE.md](docs/ADVANCED_USAGE.md)** - продвинутые сценарии
+- **[docs/SPECIAL_BLOCKS_GUIDE.md](docs/SPECIAL_BLOCKS_GUIDE.md)** - специальные блоки
+- **[docs/VALIDATORS_REFERENCE.md](docs/VALIDATORS_REFERENCE.md)** - все валидаторы
+- **[docs/FORMATTERS_REFERENCE.md](docs/FORMATTERS_REFERENCE.md)** - все форматтеры
+- **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - решение проблем
+- **[Исходный код](https://github.com/Eapwrk/xmlriver-pro)** - полный код с комментариями
 
 ## 🤝 Вклад в проект
 
