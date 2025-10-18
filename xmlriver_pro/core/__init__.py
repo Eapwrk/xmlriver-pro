@@ -1,0 +1,72 @@
+"""
+Core модуль XMLRiver Pro API
+"""
+
+from .base_client import BaseClient
+from .exceptions import (
+    XMLRiverError,
+    AuthenticationError,
+    RateLimitError,
+    NoResultsError,
+    NetworkError,
+    ValidationError,
+    InsufficientFundsError,
+    ServiceUnavailableError,
+    APIError,
+    raise_xmlriver_error,
+    get_error_message,
+)
+from .types import (
+    SearchType,
+    TimeFilter,
+    DeviceType,
+    OSType,
+    SearchResult,
+    SearchResponse,
+    NewsResult,
+    ImageResult,
+    MapResult,
+    AdResult,
+    AdsResponse,
+    OneBoxDocument,
+    KnowledgeGraph,
+    RelatedSearch,
+    SearchsterResult,
+    Coords,
+    SearchParams,
+)
+
+__all__ = [
+    # Base client
+    "BaseClient",
+    # Exceptions
+    "XMLRiverError",
+    "AuthenticationError",
+    "RateLimitError",
+    "NoResultsError",
+    "NetworkError",
+    "ValidationError",
+    "InsufficientFundsError",
+    "ServiceUnavailableError",
+    "APIError",
+    "raise_xmlriver_error",
+    "get_error_message",
+    # Types
+    "SearchType",
+    "TimeFilter",
+    "DeviceType",
+    "OSType",
+    "SearchResult",
+    "SearchResponse",
+    "NewsResult",
+    "ImageResult",
+    "MapResult",
+    "AdResult",
+    "AdsResponse",
+    "OneBoxDocument",
+    "KnowledgeGraph",
+    "RelatedSearch",
+    "SearchsterResult",
+    "Coords",
+    "SearchParams",
+]

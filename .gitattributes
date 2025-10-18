@@ -1,0 +1,20 @@
+# Установить поведение по умолчанию для всех файлов
+* text=auto
+
+# Python файлы
+*.py text eol=lf
+
+# Конфигурационные файлы
+*.toml text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Исключения для бинарных файлов
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
