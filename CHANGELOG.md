@@ -15,7 +15,12 @@
   - Google домены (3 функции): `get_google_domain`, `find_google_domains`, `get_all_google_domains`
   - Города (3 функции): `get_city`, `find_cities`, `get_cities_by_country`
   - Универсальные (3 функции): `search_place`, `get_region_for_yandex_search`, `get_country_code_for_google_search`
-  - Статистика (2 функции): `get_geo_stats`
+  - Статистика (1 функция): `get_geo_stats`
+
+### Added
+- Добавлен `test_geo_public_api.py` - тест проверяющий экспорт всех geo_data функций в публичный API
+  - 8 тестов покрывают все категории функций и проверяют доступность через импорт
+  - Предотвращает повторение проблемы с неэкспортированными функциями
 
 ## [1.2.8] - 2025-01-18
 
