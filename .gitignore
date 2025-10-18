@@ -170,9 +170,10 @@ fixtures/
 docs/official/
 download_docs.py
 
-# Version management scripts (temporary)
+# Version management scripts (internal developer tools)
 update_version.py
 create_release.py
+update_geo_data.py
 
 # Test files with real credentials (CRITICAL SECURITY)
 comprehensive_api_tests.py
