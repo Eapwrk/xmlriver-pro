@@ -7,6 +7,16 @@
 
 ## [Unreleased]
 
+### Fixed
+- Экспортированы функции работы с географическими данными в публичный API
+  - 18 функций теперь доступны через `from xmlriver_pro.utils import ...`
+  - Yandex регионы (4 функции): `get_yandex_region`, `find_yandex_regions`, `get_yandex_regions_by_parent`, `get_yandex_region_hierarchy`
+  - Google языки (3 функции): `get_google_language`, `find_google_languages`, `get_all_google_languages`
+  - Google домены (3 функции): `get_google_domain`, `find_google_domains`, `get_all_google_domains`
+  - Города (3 функции): `get_city`, `find_cities`, `get_cities_by_country`
+  - Универсальные (3 функции): `search_place`, `get_region_for_yandex_search`, `get_country_code_for_google_search`
+  - Статистика (2 функции): `get_geo_stats`
+
 ## [1.2.8] - 2025-01-18
 
 ### Added
