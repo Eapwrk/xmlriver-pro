@@ -11,11 +11,15 @@ load_dotenv()
 USER_ID = os.getenv("XMLRIVER_USER_ID")
 API_KEY = os.getenv("XMLRIVER_API_KEY")
 
-# Пропускаем все тесты в этом файле, если учетные данные не установлены
-pytestmark = pytest.mark.skipif(
-    not USER_ID or not API_KEY,
-    reason="XMLRIVER_USER_ID and XMLRIVER_API_KEY are not set in the environment",
-)
+# Помечаем все тесты как real_api (требуют реальных API ключей и стоят денег!)
+# И пропускаем, если учетные данные не установлены
+pytestmark = [
+    pytest.mark.real_api,
+    pytest.mark.skipif(
+        not USER_ID or not API_KEY,
+        reason="XMLRIVER_USER_ID and XMLRIVER_API_KEY are not set in the environment",
+    ),
+]
 
 
 @pytest.fixture(scope="module")

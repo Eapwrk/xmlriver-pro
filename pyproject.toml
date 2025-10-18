@@ -114,10 +114,15 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
+    "-m not real_api",  # По умолчанию ИСКЛЮЧАЕМ тесты с реальными API (они стоят денег!)
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
     "asyncio: marks tests as asyncio tests",
+    "real_api: marks tests that make real API calls and COST MONEY (deselect by default with '-m not real_api')",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
 ]
