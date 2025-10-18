@@ -523,9 +523,6 @@ pre-commit install
 
 ```bash
 pytest
-black xmlriver_pro tests
-pylint xmlriver_pro
-mypy xmlriver_pro
 ```
 
 ## 📄 Лицензия
