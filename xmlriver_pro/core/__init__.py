@@ -2,7 +2,7 @@
 Core модуль XMLRiver Pro API
 """
 
-from .base_client import BaseClient
+from .async_base_client import AsyncBaseClient
 from .exceptions import (
     XMLRiverError,
     AuthenticationError,
@@ -38,7 +38,7 @@ from .types import (
 
 __all__ = [
     # Base client
-    "BaseClient",
+    "AsyncBaseClient",
     # Exceptions
     "XMLRiverError",
     "AuthenticationError",

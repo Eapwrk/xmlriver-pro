@@ -132,21 +132,6 @@ XMLRIVER_API_KEY=your_api_key_here
 
 ### 📝 Базовые примеры
 
-#### Синхронный поиск
-```python
-from xmlriver_pro import GoogleClient, YandexClient
-
-# Google поиск
-google = GoogleClient(user_id=123, api_key="your_key")
-results = google.search("python programming")
-print(f"Найдено: {results.total_results} результатов")
-
-# Yandex поиск
-yandex = YandexClient(user_id=123, api_key="your_key")
-results = yandex.search("программирование python")
-print(f"Найдено: {results.total_results} результатов")
-```
-
 #### Асинхронный поиск
 ```python
 import asyncio
@@ -168,50 +153,77 @@ asyncio.run(main())
 
 #### Поиск новостей
 ```python
-from xmlriver_pro import GoogleNews, YandexNews
+import asyncio
+from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
 from xmlriver_pro.core.types import TimeFilter
 
-# Google новости
-google_news = GoogleNews(user_id=123, api_key="your_key")
-results = google_news.search_news("python", TimeFilter.LAST_WEEK)
+async def main():
+    # Google новости
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        results = await google.search_news("python", time_filter=TimeFilter.LAST_WEEK)
+        for news in results.results:
+            print(f"{news.title}: {news.url}")
+    
+    # Yandex новости
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
+        results = await yandex.search_news("python")
+        for news in results.results:
+            print(f"{news.title}: {news.url}")
 
-# Yandex новости
-yandex_news = YandexNews(user_id=123, api_key="your_key")
-results = yandex_news.search_news("python", within=7)  # За неделю
+asyncio.run(main())
 ```
 
 #### Поиск изображений
 ```python
-from xmlriver_pro import GoogleImages
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
 
-images = GoogleImages(user_id=123, api_key="your_key")
-results = images.search_images("python logo", count=20)
+async def main():
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        results = await google.search_images("python logo", num_results=20)
+        for image in results.results:
+            print(f"{image.title}: {image.img_url}")
+
+asyncio.run(main())
 ```
 
 #### Поиск по картам
 ```python
-from xmlriver_pro import GoogleMaps
-from xmlriver_pro.core.types import Coords
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
 
-maps = GoogleMaps(user_id=123, api_key="your_key")
-results = maps.search_maps(
-    "python office",
-    coords=Coords(latitude=37.7749, longitude=-122.4194),
-    zoom=12
-)
+async def main():
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        results = await google.search_maps(
+            "python office",
+            coords=(37.7749, -122.4194),
+            zoom=12
+        )
+        for place in results.results:
+            print(f"{place.title}: {place.address}")
+
+asyncio.run(main())
 ```
 
 #### Рекламные блоки
 ```python
-from xmlriver_pro import GoogleAds, YandexAds
+import asyncio
+from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
 
-# Google реклама
-google_ads = GoogleAds(user_id=123, api_key="your_key")
-ads = google_ads.get_ads("python programming")
+async def main():
+    # Google реклама
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        results = await google.get_ads("python programming")
+        for ad in results.results:
+            print(f"{ad.title}: {ad.url}")
+    
+    # Yandex реклама
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
+        results = await yandex.get_ads("программирование python")
+        for ad in results.results:
+            print(f"{ad.title}: {ad.url}")
 
-# Yandex реклама
-yandex_ads = YandexAds(user_id=123, api_key="your_key")
-ads = yandex_ads.get_ads("программирование python")
+asyncio.run(main())
 ```
 
 ## 🔧 Конфигурация
@@ -229,30 +241,42 @@ ads = yandex_ads.get_ads("программирование python")
 
 ### Пример конфигурации
 ```python
-from xmlriver_pro import GoogleClient
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
 
-client = GoogleClient(
-    user_id=123,
-    api_key="your_key",
-    timeout=60,           # 60 секунд таймаут
-    retry_count=3,        # 3 попытки
-    retry_delay=1.0,      # 1 секунда между попытками
-    max_concurrent=5      # 5 одновременных запросов
-)
+async def main():
+    async with AsyncGoogleClient(
+        user_id=123,
+        api_key="your_key",
+        timeout=60,           # 60 секунд таймаут
+        max_retries=3,        # 3 попытки
+        retry_delay=1.0,      # 1 секунда между попытками
+        max_concurrent=5      # 5 одновременных запросов
+    ) as client:
+        results = await client.search("python")
+        print(f"Найдено: {results.total_results}")
+
+asyncio.run(main())
 ```
 
 ### Переменные окружения
 ```python
 import os
+import asyncio
 from dotenv import load_dotenv
-from xmlriver_pro import GoogleClient
+from xmlriver_pro import AsyncGoogleClient
 
 load_dotenv()
 
-client = GoogleClient(
-    user_id=int(os.getenv("XMLRIVER_USER_ID")),
-    api_key=os.getenv("XMLRIVER_API_KEY")
-)
+async def main():
+    async with AsyncGoogleClient(
+        user_id=int(os.getenv("XMLRIVER_USER_ID")),
+        api_key=os.getenv("XMLRIVER_API_KEY")
+    ) as client:
+        results = await client.search("python")
+        print(f"Найдено: {results.total_results}")
+
+asyncio.run(main())
 ```
 
 ## 💡 Примеры использования
@@ -377,58 +401,68 @@ os_type = OSType.WINDOWS  # WINDOWS, MACOS, LINUX, ANDROID, IOS
 ## ⚠️ Обработка ошибок
 
 ```python
+import asyncio
+import logging
+from xmlriver_pro import AsyncGoogleClient
 from xmlriver_pro.core import (
     XMLRiverError, AuthenticationError, RateLimitError, 
     NoResultsError, NetworkError, ValidationError,
     InsufficientFundsError, ServiceUnavailableError
 )
 
-try:
-    results = google.search("python")
-except AuthenticationError as e:
-    # Ошибка аутентификации (коды 31, 42, 45)
-    logger.error(f"Authentication failed: {e}")
-except RateLimitError as e:
-    # Превышен лимит запросов (коды 110, 111, 115)
-    logger.warning(f"Rate limit exceeded: {e}")
-except NoResultsError as e:
-    # Нет результатов поиска (код 15)
-    logger.info(f"No results found: {e}")
-except InsufficientFundsError as e:
-    # Недостаточно средств (код 200)
-    logger.error(f"Insufficient funds: {e}")
-except ServiceUnavailableError as e:
-    # Сервис недоступен (коды 101, 201)
-    logger.warning(f"Service unavailable: {e}")
-except NetworkError as e:
-    # Ошибка сети (коды 500, 202) - требует повтора
-    logger.error(f"Network error: {e}")
-except ValidationError as e:
-    # Ошибка валидации параметров (коды 2, 102-108, 120, 121)
-    logger.error(f"Validation error: {e}")
+logger = logging.getLogger(__name__)
+
+async def main():
+    async with AsyncGoogleClient(user_id=123, api_key="key") as google:
+        try:
+            results = await google.search("python")
+        except AuthenticationError as e:
+            # Ошибка аутентификации (коды 31, 42, 45)
+            logger.error(f"Authentication failed: {e}")
+        except RateLimitError as e:
+            # Превышен лимит запросов (коды 110, 111, 115)
+            logger.warning(f"Rate limit exceeded: {e}")
+        except NoResultsError as e:
+            # Нет результатов поиска (код 15)
+            logger.info(f"No results found: {e}")
+        except InsufficientFundsError as e:
+            # Недостаточно средств (код 200)
+            logger.error(f"Insufficient funds: {e}")
+        except ServiceUnavailableError as e:
+            # Сервис недоступен (коды 101, 201)
+            logger.warning(f"Service unavailable: {e}")
+        except NetworkError as e:
+            # Ошибка сети (коды 500, 202) - требует повтора
+            logger.error(f"Network error: {e}")
+        except ValidationError as e:
+            # Ошибка валидации параметров (коды 2, 102-108, 120, 121)
+            logger.error(f"Validation error: {e}")
+
+asyncio.run(main())
 ```
 
 ## 📊 Статистика и мониторинг
 
 ```python
-# Получение баланса (один на весь аккаунт)
-balance = google.get_balance()  # или yandex.get_balance() - результат одинаковый
+import asyncio
+from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
 
-# Получение стоимости (разная для каждой системы)
-google_cost = google.get_cost()  # Стоимость Google запросов
-yandex_cost = yandex.get_cost()  # Стоимость Yandex запросов
+async def main():
+    async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        # Получение баланса (один на весь аккаунт)
+        balance = await google.get_balance()
+        print(f"Баланс: {balance} руб.")
+        
+        # Получение стоимости Google запросов
+        google_cost = await google.get_cost()
+        print(f"Стоимость Google: {google_cost} руб/1000 запросов")
+    
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
+        # Получение стоимости Yandex запросов (разная для каждой системы)
+        yandex_cost = await yandex.get_cost()
+        print(f"Стоимость Yandex: {yandex_cost} руб/1000 запросов")
 
-# Получение информации об ограничениях API
-limits = google.get_api_limits()
-print(f"Максимум потоков: {limits['max_concurrent_streams']}")
-print(f"Дневной лимит Google: {limits['daily_limits']['google']:,} запросов")
-print(f"Дневной лимит Yandex: {limits['daily_limits']['yandex']:,} запросов")
-
-# Проверка индексации
-is_indexed = google.check_indexing("https://python.org")
-
-# Проверка доверия к домену
-is_trusted = google.is_trust_domain("python.org")
+asyncio.run(main())
 ```
 
 ## ⚡ Ограничения API
@@ -442,22 +476,36 @@ is_trusted = google.is_trust_domain("python.org")
 
 ### ⏱️ **Рекомендации по таймаутам:**
 ```python
-# Используйте таймаут 60 секунд для надежности
-google = GoogleClient(user_id=123, api_key="key", timeout=60)
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
 
-# При низком таймауте есть риск потерять ответы
-# Деньги за запрос снимаются, но результат может не прийти
+async def main():
+    # Используйте таймаут 60 секунд для надежности
+    async with AsyncGoogleClient(user_id=123, api_key="key", timeout=60) as google:
+        results = await google.search("python")
+        # При низком таймауте есть риск потерять ответы
+        # Деньги за запрос снимаются, но результат может не прийти
+
+asyncio.run(main())
 ```
 
 ### 🚨 **Обработка ошибок потоков:**
 ```python
-try:
-    results = google.search("python")
-except RateLimitError as e:
-    if e.code in [110, 111, 115]:
-        # Временные ошибки потоков - повторите запрос
-        time.sleep(5)  # Подождите 5 секунд
-        results = google.search("python")  # Повторите
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
+from xmlriver_pro.core import RateLimitError
+
+async def main():
+    async with AsyncGoogleClient(user_id=123, api_key="key") as google:
+        try:
+            results = await google.search("python")
+        except RateLimitError as e:
+            if e.code in [110, 111, 115]:
+                # Временные ошибки потоков - повторите запрос
+                await asyncio.sleep(5)  # Подождите 5 секунд
+                results = await google.search("python")  # Повторите
+
+asyncio.run(main())
 ```
 
 ## 🧪 Тестирование

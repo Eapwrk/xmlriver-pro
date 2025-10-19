@@ -1,29 +1,11 @@
 """
 XMLRiver Pro - Professional Python client for XMLRiver API
 
-Полнофункциональная Python библиотека для работы с API xmlriver.com
+Полнофункциональная асинхронная Python библиотека для работы с API xmlriver.com
 с поддержкой всех типов поиска Google и Yandex.
 
 Version: 1.2.9
 """
-
-# Импорт основных клиентов
-from .google import (
-    GoogleClient,
-    GoogleSearch,
-    GoogleNews,
-    GoogleImages,
-    GoogleMaps,
-    GoogleAds,
-    GoogleSpecialBlocks,
-)
-from .yandex import (
-    YandexClient,
-    YandexSearch,
-    YandexNews,
-    YandexAds,
-    YandexSpecialBlocks,
-)
 
 # Импорт асинхронных клиентов
 from .google.async_client import AsyncGoogleClient
@@ -81,6 +63,7 @@ __email__ = "support@xmlriver.com"
 
 """
 Основные возможности:
+- Асинхронный API для максимальной производительности
 - Органический поиск Google и Yandex
 - Поиск по новостям, изображениям, картам
 - Рекламные блоки
@@ -90,15 +73,23 @@ __email__ = "support@xmlriver.com"
 - Comprehensive тесты
 
 Пример использования:
-    from xmlriver_pro import GoogleClient, YandexClient
+    import asyncio
+    from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
 
-    # Google поиск
-    google = GoogleClient(user_id=123, api_key="your_key")
-    results = google.search("python programming")
+    async def main():
+        # Google поиск
+        async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+            results = await google.search("python programming")
+            for result in results.results:
+                print(f"{result.title}: {result.url}")
 
-    # Yandex поиск
-    yandex = YandexClient(user_id=123, api_key="your_key")
-    results = yandex.search("программирование на python")
+        # Yandex поиск
+        async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
+            results = await yandex.search("программирование на python")
+            for result in results.results:
+                print(f"{result.title}: {result.url}")
+
+    asyncio.run(main())
 """
 
 __all__ = [
@@ -106,20 +97,6 @@ __all__ = [
     "__version__",
     "__author__",
     "__email__",
-    # Google клиенты
-    "GoogleClient",
-    "GoogleSearch",
-    "GoogleNews",
-    "GoogleImages",
-    "GoogleMaps",
-    "GoogleAds",
-    "GoogleSpecialBlocks",
-    # Yandex клиенты
-    "YandexClient",
-    "YandexSearch",
-    "YandexNews",
-    "YandexAds",
-    "YandexSpecialBlocks",
     # Асинхронные клиенты
     "AsyncGoogleClient",
     "AsyncYandexClient",
