@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xmlriver-pro"
-version = "1.2.9"
+version = "2.0.0"
 authors = [
     {name = "XMLRiver Pro Team", email = "seo@controlseo.ru"}
 ]
@@ -85,7 +85,7 @@ disable = [
 ]
 
 [tool.mypy]
-python_version = "1.2.9"
+python_version = "2.0.0"
 warn_return_any = false
 warn_unused_configs = true
 # Смягченные настройки для постепенного улучшения
