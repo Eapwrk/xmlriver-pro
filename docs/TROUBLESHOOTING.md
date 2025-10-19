@@ -23,13 +23,18 @@
 **Проблема:** Ошибка аутентификации с кодом 31, 42 или 45.
 
 ```python
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
 from xmlriver_pro.core.exceptions import AuthenticationError
 
-try:
-    client = GoogleClient(user_id=123, api_key="invalid_key")
-    results = client.search("python")
-except AuthenticationError as e:
-    print(f"Ошибка аутентификации: {e}")
+async def main():
+    try:
+        async with AsyncGoogleClient(user_id=123, api_key="invalid_key") as client:
+            results = await client.search("python")
+    except AuthenticationError as e:
+        print(f"Ошибка аутентификации: {e}")
+
+asyncio.run(main())
 ```
 
 **Решение:**
@@ -56,7 +61,8 @@ except AuthenticationError as e:
    user_id = int(os.getenv("XMLRIVER_USER_ID"))
    api_key = os.getenv("XMLRIVER_API_KEY")
    
-   client = GoogleClient(user_id=user_id, api_key=api_key)
+   async with AsyncGoogleClient(user_id=user_id, api_key=api_key) as client:
+       results = await client.search("test")
    ```
 
 4. **Проверьте баланс:**
@@ -225,14 +231,18 @@ async def too_many_requests():
 **Проблема:** Запросы превышают установленный таймаут.
 
 ```python
-import requests
-from requests.exceptions import Timeout
+import asyncio
+import aiohttp
+from xmlriver_pro import AsyncGoogleClient
 
-try:
-    client = GoogleClient(user_id=123, api_key="key", timeout=5)
-    results = client.search("python")
-except Timeout:
-    print("Превышен таймаут запроса")
+async def main():
+    try:
+        async with AsyncGoogleClient(user_id=123, api_key="key", timeout=5) as client:
+            results = await client.search("python")
+    except asyncio.TimeoutError:
+        print("Превышен таймаут запроса")
+
+asyncio.run(main())
 ```
 
 **Решение:**
@@ -240,18 +250,20 @@ except Timeout:
 1. **Увеличьте таймаут:**
    ```python
    # Рекомендуемый таймаут 60 секунд
-   client = GoogleClient(user_id=123, api_key="key", timeout=60)
+   async with AsyncGoogleClient(user_id=123, api_key="key", timeout=60) as client:
+       results = await client.search("python")
    ```
 
 2. **Используйте retry механизм:**
    ```python
-   client = GoogleClient(
+   async with AsyncGoogleClient(
        user_id=123, 
        api_key="key", 
        timeout=60,
-       retry_count=3,  # 3 попытки
+       max_retries=3,  # 3 попытки
        retry_delay=1.0  # 1 секунда между попытками
-   )
+   ) as client:
+       results = await client.search("python")
    ```
 
 3. **Обработка таймаутов:**
@@ -453,7 +465,7 @@ async def wrong_usage():
 **Проблема:** Модуль не найден при импорте.
 
 ```python
-from xmlriver_pro import GoogleClient  # ImportError
+from xmlriver_pro import AsyncGoogleClient  # Правильный импорт
 ```
 
 **Решение:**
@@ -510,8 +522,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Теперь вы увидите детальную информацию о запросах
-client = GoogleClient(user_id=123, api_key="key")
-results = client.search("python")
+async with AsyncGoogleClient(user_id=123, api_key="key") as client:
+    results = await client.search("python")
 ```
 
 ### Проверка статуса клиента

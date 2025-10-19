@@ -217,12 +217,13 @@ for key, value in stats.items():
 
 ### Пример 1: Поиск с региональными настройками
 ```python
-from xmlriver_pro import YandexClient, GoogleClient
+from xmlriver_pro import AsyncYandexClient, AsyncGoogleClient
 from xmlriver_pro.utils import get_region_for_yandex_search, get_country_code_for_google_search
 
 # Настройка клиентов
-yandex = YandexClient(user_id=123, api_key="your_key")
-google = GoogleClient(user_id=123, api_key="your_key")
+async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex, \
+         AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+    # Ваш код здесь
 
 # Поиск по региону
 place = "Москва"
@@ -241,12 +242,13 @@ if google_country_code:
 ### Пример 2: Массовый поиск по регионам
 ```python
 from xmlriver_pro.utils import get_yandex_regions_by_parent, get_all_google_domains
-from xmlriver_pro import YandexClient, GoogleClient
+from xmlriver_pro import AsyncYandexClient, AsyncGoogleClient
 import asyncio
 
 async def mass_regional_search():
-    yandex = YandexClient(user_id=123, api_key="your_key")
-    google = GoogleClient(user_id=123, api_key="your_key")
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex, \
+             AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        # Ваш код здесь
     
     # Получить все регионы России (ID = 225)
     russia_regions = get_yandex_regions_by_parent(225)
@@ -306,7 +308,7 @@ for domain in domains:
 
 ### Использование в поисковых запросах
 ```python
-from xmlriver_pro import YandexClient, GoogleClient
+from xmlriver_pro import AsyncYandexClient, AsyncGoogleClient
 from xmlriver_pro.utils import (
     get_region_for_yandex_search,
     get_country_code_for_google_search,
@@ -326,8 +328,9 @@ def smart_search(query: str, place: str, language: str = "ru"):
     google_domain = get_google_domain("ru")  # По умолчанию .ru
     
     # Настройка клиентов
-    yandex = YandexClient(user_id=123, api_key="your_key")
-    google = GoogleClient(user_id=123, api_key="your_key")
+    async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex, \
+             AsyncGoogleClient(user_id=123, api_key="your_key") as google:
+        # Ваш код здесь
     
     results = {}
     

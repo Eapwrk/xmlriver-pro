@@ -4,7 +4,7 @@
 
 XMLRiver Pro uses centralized versioning system:
 
-- **Version location**: `__version__ = "1.1.1"` in `xmlriver_pro/__init__.py`
+- **Version location**: `__version__ = "2.0.0"` in `xmlriver_pro/__init__.py`
 - **Synchronized files**: `pyproject.toml`, `setup.py`, `__init__.py`
 - **History**: `CHANGELOG.md` with full release history
 - **Format**: Semantic Versioning (MAJOR.MINOR.PATCH)
@@ -20,14 +20,14 @@ python update_version.py 1.1.0
 ### `create_release.py`
 Creates release with checks:
 ```bash
-python create_release.py 1.1.0
+python create_release.py 2.0.0
 ```
 
 ## Release Process
 
-1. Update version: `python update_version.py 1.1.0`
-2. Commit: `git commit -m "Bump version to 1.1.0"`
-3. Create tag: `git tag -a v1.1.0 -m "Release 1.1.0"`
+1. Update version: `python update_version.py 2.0.0`
+2. Commit: `git commit -m "Bump version to 2.0.0"`
+3. Create tag: `git tag -a v2.0.0 -m "Release 2.0.0"`
 4. Push: `git push origin main --tags`
 5. GitHub Actions automatically creates release
 
@@ -39,7 +39,7 @@ python create_release.py 1.1.0
 pip install git+https://github.com/Eapwrk/xmlriver-pro.git
 
 # Specific version
-pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v1.0.2
+pip install git+https://github.com/Eapwrk/xmlriver-pro.git@v2.0.0
 
 # Update to latest
 pip install --upgrade git+https://github.com/Eapwrk/xmlriver-pro.git

@@ -27,6 +27,10 @@
 - ✅ README.md полностью переработан - только асинхронные примеры
 - ✅ docs/examples.md - все примеры обновлены на async/await
 - ✅ docs/API_REFERENCE.md - документация асинхронных клиентов
+- ✅ docs/ADVANCED_USAGE.md - полностью переработан с асинхронными примерами
+- ✅ docs/TROUBLESHOOTING.md - обновлены все примеры на async/await
+- ✅ docs/GEO_DATA_GUIDE.md - исправлены импорты и примеры
+- ✅ docs/versioning.md - обновлены версии до 2.0.0
 - ✅ Удалены устаревшие синхронные примеры из всей документации
 
 ### Migration Guide
