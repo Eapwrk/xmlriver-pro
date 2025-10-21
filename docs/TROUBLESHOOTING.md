@@ -55,12 +55,12 @@ asyncio.run(main())
    ```python
    import os
    from dotenv import load_dotenv
-   
+
    load_dotenv()
-   
+
    user_id = int(os.getenv("XMLRIVER_USER_ID"))
    api_key = os.getenv("XMLRIVER_API_KEY")
-   
+
    async with AsyncGoogleClient(user_id=user_id, api_key=api_key) as client:
        results = await client.search("test")
    ```
@@ -93,7 +93,7 @@ except InsufficientFundsError as e:
    ```python
    balance = client.get_balance()
    print(f"Текущий баланс: {balance}")
-   
+
    if balance <= 0:
        print("Пополните баланс на xmlriver.com")
    ```
@@ -125,9 +125,9 @@ except RateLimitError as e:
 1. **Добавьте задержки между запросами:**
    ```python
    import time
-   
+
    queries = ["python", "javascript", "java"]
-   
+
    for query in queries:
        try:
            results = client.search(query)
@@ -143,7 +143,7 @@ except RateLimitError as e:
    ```python
    def adaptive_search(client, queries, initial_delay=1.0):
        delay = initial_delay
-       
+
        for query in queries:
            try:
                results = client.search(query)
@@ -154,7 +154,7 @@ except RateLimitError as e:
                delay = min(10.0, delay * 1.5)  # Увеличиваем задержку
                time.sleep(delay)
                results = client.search(query)
-           
+
            time.sleep(delay)
    ```
 
@@ -189,7 +189,7 @@ async def too_many_requests():
    ```python
    async def controlled_requests():
        async with AsyncGoogleClient(
-           user_id=123, 
+           user_id=123,
            api_key="key",
            max_concurrent=5  # Ограничиваем до 5 потоков
        ) as client:
@@ -205,7 +205,7 @@ async def too_many_requests():
            status = client.get_concurrent_status()
            print(f"Активных запросов: {status['active_requests']}")
            print(f"Доступных слотов: {status['available_slots']}")
-           
+
            # Выполняем запросы
            results = await client.search("python")
    ```
@@ -214,12 +214,12 @@ async def too_many_requests():
    ```python
    async def semaphore_controlled():
        semaphore = asyncio.Semaphore(3)  # Максимум 3 одновременных запроса
-       
+
        async with AsyncGoogleClient(user_id=123, api_key="key") as client:
            async def controlled_search(query):
                async with semaphore:
                    return await client.search(query)
-           
+
            tasks = [controlled_search(f"query_{i}") for i in range(10)]
            results = await asyncio.gather(*tasks)
    ```
@@ -257,8 +257,8 @@ asyncio.run(main())
 2. **Используйте retry механизм:**
    ```python
    async with AsyncGoogleClient(
-       user_id=123, 
-       api_key="key", 
+       user_id=123,
+       api_key="key",
        timeout=60,
        max_retries=3,  # 3 попытки
        retry_delay=1.0  # 1 секунда между попытками
@@ -270,7 +270,7 @@ asyncio.run(main())
    ```python
    import time
    from requests.exceptions import Timeout
-   
+
    def search_with_retry(client, query, max_retries=3):
        for attempt in range(max_retries):
            try:
@@ -307,7 +307,7 @@ except ExpatError as e:
    # Включите отладку для просмотра сырого ответа
    import logging
    logging.basicConfig(level=logging.DEBUG)
-   
+
    results = client.search("python")
    ```
 
@@ -327,18 +327,18 @@ except ExpatError as e:
    def safe_search(client, query):
        try:
            results = client.search(query)
-           
+
            # Проверяем структуру ответа
            if not hasattr(results, 'total_results'):
                print("Некорректная структура ответа")
                return None
-           
+
            if results.total_results == 0:
                print("Нет результатов")
                return results
-           
+
            return results
-           
+
        except Exception as e:
            print(f"Ошибка поиска: {e}")
            return None
@@ -364,18 +364,18 @@ except ValidationError as e:
 1. **Используйте валидаторы:**
    ```python
    from xmlriver_pro.utils import validate_query, validate_device, validate_country
-   
+
    def safe_search(client, query, device="desktop", country=2840):
        # Валидируем параметры перед запросом
        if not validate_query(query):
            raise ValueError("Невалидный поисковый запрос")
-       
+
        if not validate_device(device):
            raise ValueError("Невалидный тип устройства")
-       
+
        if not validate_country(country):
            raise ValueError("Невалидный ID страны")
-       
+
        return client.search(query, device=device, country=country)
    ```
 
@@ -386,25 +386,25 @@ except ValidationError as e:
        validate_region, validate_language, validate_domain, validate_groupby,
        validate_page, validate_time_filter, validate_within
    )
-   
+
    def validate_all_params(params, search_engine="google"):
        errors = []
-       
+
        if not validate_query(params.get("query")):
            errors.append("Невалидный поисковый запрос")
-       
+
        if "device" in params and not validate_device(params["device"]):
            errors.append("Невалидный тип устройства")
-       
+
        if "country" in params and not validate_country(params["country"]):
            errors.append("Невалидный ID страны")
-       
+
        if "page" in params and not validate_page(params["page"], search_engine):
            errors.append("Невалидный номер страницы")
-       
+
        if errors:
            raise ValidationError(f"Ошибки валидации: {', '.join(errors)}")
-       
+
        return True
    ```
 
@@ -535,12 +535,12 @@ def debug_client_status(client):
         balance = client.get_balance()
         cost = client.get_cost()
         limits = client.get_api_limits()
-        
+
         print("=== Статус клиента ===")
         print(f"Баланс: {balance}")
         print(f"Стоимость запроса: {cost}")
         print(f"Лимиты: {limits}")
-        
+
     except Exception as e:
         print(f"Ошибка получения статуса: {e}")
 
@@ -589,19 +589,19 @@ logging.basicConfig(
 def logged_search(client, query):
     """Поиск с логированием"""
     start_time = datetime.now()
-    
+
     try:
         results = client.search(query)
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         logging.info(f"Поиск '{query}': {results.total_results} результатов за {duration:.2f} сек")
         return results
-        
+
     except Exception as e:
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         logging.error(f"Ошибка поиска '{query}' за {duration:.2f} сек: {e}")
         raise
 

@@ -178,3 +178,41 @@ class SearchResponse:
     showing_results_for: Optional[str] = None
     correct: Optional[str] = None
     fixtype: Optional[str] = None
+
+
+@dataclass
+class WordstatKeyword:
+    """Ключевое слово из Wordstat"""
+
+    text: str
+    value: int
+    is_association: bool = True
+
+
+@dataclass
+class WordstatResponse:
+    """Ответ Wordstat API с топами запросов"""
+
+    query: str
+    associations: List[WordstatKeyword]
+    popular: List[WordstatKeyword]
+
+
+@dataclass
+class WordstatHistoryPoint:
+    """Точка в динамике Wordstat"""
+
+    date: str
+    absolute_value: int
+    relative_value: Optional[float] = None
+
+
+@dataclass
+class WordstatHistoryResponse:
+    """Ответ Wordstat API с динамикой запроса"""
+
+    query: str
+    total_value: int
+    history: List[WordstatHistoryPoint]
+    associations: List[WordstatKeyword]
+    popular: List[WordstatKeyword]

@@ -75,6 +75,7 @@ XMLRiver Pro — это **профессиональная** Python библио
 - 🗺️ Карты с координатами
 - 📢 Рекламные блоки
 - 🧩 Специальные блоки (OneBox, Knowledge Graph)
+- 📊 **Yandex Wordstat** - частотность и динамика запросов
 - ⚡ **Асинхронная поддержка** с ограничением потоков
 
 ## ✨ Ключевые особенности
@@ -222,6 +223,30 @@ async def main():
         results = await yandex.get_ads("программирование python")
         for ad in results.results:
             print(f"{ad.title}: {ad.url}")
+
+asyncio.run(main())
+```
+
+#### Yandex Wordstat
+
+```python
+import asyncio
+from xmlriver_pro import AsyncWordstatClient
+
+async def main():
+    async with AsyncWordstatClient(user_id=123, api_key="your_key") as client:
+        # Получение топов запросов
+        result = await client.get_words("python")
+        print(f"Associations: {len(result.associations)}")
+        print(f"Popular: {len(result.popular)}")
+        
+        # Получение динамики
+        history = await client.get_history("python", period="month")
+        print(f"Total frequency: {history.total_value}")
+        
+        # Получение частотности
+        frequency = await client.get_frequency("python")
+        print(f"Frequency: {frequency}")
 
 asyncio.run(main())
 ```
@@ -549,6 +574,7 @@ pytest -m real_api -v  # Запуск ТОЛЬКО real_api тестов (~$5-10
 - **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - полный справочник API
 - **[docs/ADVANCED_USAGE.md](docs/ADVANCED_USAGE.md)** - продвинутые сценарии
 - **[docs/SPECIAL_BLOCKS_GUIDE.md](docs/SPECIAL_BLOCKS_GUIDE.md)** - специальные блоки
+- **[docs/WORDSTAT_GUIDE.md](docs/WORDSTAT_GUIDE.md)** - руководство по Wordstat API
 - **[docs/VALIDATORS_REFERENCE.md](docs/VALIDATORS_REFERENCE.md)** - все валидаторы
 - **[docs/FORMATTERS_REFERENCE.md](docs/FORMATTERS_REFERENCE.md)** - все форматтеры
 - **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - решение проблем

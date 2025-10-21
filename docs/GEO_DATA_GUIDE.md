@@ -249,13 +249,13 @@ async def mass_regional_search():
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex, \
              AsyncGoogleClient(user_id=123, api_key="your_key") as google:
         # Ваш код здесь
-    
+
     # Получить все регионы России (ID = 225)
     russia_regions = get_yandex_regions_by_parent(225)
-    
+
     # Получить все домены Google
     google_domains = get_all_google_domains()
-    
+
     # Поиск по регионам
     for region in russia_regions[:5]:  # Первые 5 регионов
         try:
@@ -263,7 +263,7 @@ async def mass_regional_search():
             print(f"Регион {region.name}: {len(results.results)} результатов")
         except Exception as e:
             print(f"Ошибка в регионе {region.name}: {e}")
-    
+
     # Поиск по доменам Google
     for domain in google_domains[:5]:  # Первые 5 доменов
         try:
@@ -318,22 +318,22 @@ from xmlriver_pro.utils import (
 
 def smart_search(query: str, place: str, language: str = "ru"):
     """Умный поиск с автоматическим определением параметров"""
-    
+
     # Определение параметров для Yandex
     yandex_region_id = get_region_for_yandex_search(place)
-    
+
     # Определение параметров для Google
     google_country_code = get_country_code_for_google_search(place)
     google_language = get_google_language(language)
     google_domain = get_google_domain("ru")  # По умолчанию .ru
-    
+
     # Настройка клиентов
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex, \
              AsyncGoogleClient(user_id=123, api_key="your_key") as google:
         # Ваш код здесь
-    
+
     results = {}
-    
+
     # Поиск в Yandex
     if yandex_region_id:
         try:
@@ -341,19 +341,19 @@ def smart_search(query: str, place: str, language: str = "ru"):
             results["yandex"] = yandex_results
         except Exception as e:
             results["yandex_error"] = str(e)
-    
+
     # Поиск в Google
     if google_country_code and google_language:
         try:
             google_results = google.search(
-                query, 
+                query,
                 gl=google_country_code,
                 hl=google_language.code
             )
             results["google"] = google_results
         except Exception as e:
             results["google_error"] = str(e)
-    
+
     return results
 
 # Использование
@@ -389,7 +389,7 @@ regions2 = find_yandex_regions("Москва")  # Быстро!
 ### Пути к файлам данных
 По умолчанию модуль ищет файлы в корневой директории проекта:
 - `yandex_geo.csv` - регионы Yandex
-- `countries.xlsx` - страны Google  
+- `countries.xlsx` - страны Google
 - `langs.xlsx` - языки Google
 - `geo.csv` - города
 

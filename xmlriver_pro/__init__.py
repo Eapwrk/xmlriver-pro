@@ -2,14 +2,15 @@
 XMLRiver Pro - Professional Python client for XMLRiver API
 
 Полнофункциональная асинхронная Python библиотека для работы с API xmlriver.com
-с поддержкой всех типов поиска Google и Yandex.
+с поддержкой всех типов поиска Google, Yandex и Wordstat.
 
-Version: 2.0.0
+Version: 2.1.0
 """
 
 # Импорт асинхронных клиентов
 from .google.async_client import AsyncGoogleClient
 from .yandex.async_client import AsyncYandexClient
+from .wordstat.async_client import AsyncWordstatClient
 
 # Импорт типов и исключений
 from .core import (
@@ -29,6 +30,10 @@ from .core import (
     KnowledgeGraph,
     RelatedSearch,
     SearchsterResult,
+    WordstatKeyword,
+    WordstatResponse,
+    WordstatHistoryPoint,
+    WordstatHistoryResponse,
     Coords,
     SearchParams,
     # Исключения
@@ -57,7 +62,7 @@ from .utils import (
 )
 
 # Версия и метаданные
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __author__ = "XMLRiver Pro Team"
 __email__ = "support@xmlriver.com"
 
@@ -68,13 +73,14 @@ __email__ = "support@xmlriver.com"
 - Поиск по новостям, изображениям, картам
 - Рекламные блоки
 - Специальные блоки (OneBox, колдунщики)
+- Yandex Wordstat - частотность и динамика запросов
 - Полная типизация
 - Современная архитектура
 - Comprehensive тесты
 
 Пример использования:
     import asyncio
-    from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient
+    from xmlriver_pro import AsyncGoogleClient, AsyncYandexClient, AsyncWordstatClient
 
     async def main():
         # Google поиск
@@ -88,6 +94,13 @@ __email__ = "support@xmlriver.com"
             results = await yandex.search("программирование на python")
             for result in results.results:
                 print(f"{result.title}: {result.url}")
+        
+        # Wordstat
+        async with AsyncWordstatClient(user_id=123, api_key="your_key") as wordstat:
+            result = await wordstat.get_words("python")
+            print(f"Associations: {len(result.associations)}")
+            frequency = await wordstat.get_frequency("python")
+            print(f"Frequency: {frequency}")
 
     asyncio.run(main())
 """
@@ -100,6 +113,7 @@ __all__ = [
     # Асинхронные клиенты
     "AsyncGoogleClient",
     "AsyncYandexClient",
+    "AsyncWordstatClient",
     # Типы
     "SearchType",
     "TimeFilter",
@@ -116,6 +130,10 @@ __all__ = [
     "KnowledgeGraph",
     "RelatedSearch",
     "SearchsterResult",
+    "WordstatKeyword",
+    "WordstatResponse",
+    "WordstatHistoryPoint",
+    "WordstatHistoryResponse",
     "Coords",
     "SearchParams",
     # Исключения

@@ -32,6 +32,10 @@ from .types import (
     KnowledgeGraph,
     RelatedSearch,
     SearchsterResult,
+    WordstatKeyword,
+    WordstatResponse,
+    WordstatHistoryPoint,
+    WordstatHistoryResponse,
     Coords,
     SearchParams,
 )
@@ -67,6 +71,10 @@ __all__ = [
     "KnowledgeGraph",
     "RelatedSearch",
     "SearchsterResult",
+    "WordstatKeyword",
+    "WordstatResponse",
+    "WordstatHistoryPoint",
+    "WordstatHistoryResponse",
     "Coords",
     "SearchParams",
 ]
