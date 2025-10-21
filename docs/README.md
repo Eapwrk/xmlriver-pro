@@ -20,6 +20,7 @@
 ### 🎯 Продвинутое использование
 - **[Продвинутое использование](ADVANCED_USAGE.md)** - сложные сценарии и оптимизация
 - **[Руководство по специальным блокам](SPECIAL_BLOCKS_GUIDE.md)** - OneBox, Knowledge Graph, колдунщики
+- **[Руководство по Wordstat](WORDSTAT_GUIDE.md)** - работа с Yandex Wordstat API
 
 ### 🔧 Решение проблем
 - **[Решение проблем](TROUBLESHOOTING.md)** - типичные ошибки и их решения
@@ -49,6 +50,7 @@ docs/
 ├── API_REFERENCE.md             # Полный справочник API
 ├── ADVANCED_USAGE.md            # Продвинутые сценарии
 ├── SPECIAL_BLOCKS_GUIDE.md      # Руководство по специальным блокам
+├── WORDSTAT_GUIDE.md            # Руководство по Wordstat API
 ├── VALIDATORS_REFERENCE.md      # Справочник валидаторов
 ├── FORMATTERS_REFERENCE.md      # Справочник форматтеров
 └── TROUBLESHOOTING.md           # Решение проблем
@@ -77,6 +79,7 @@ docs/
 |---------|-----------|
 | 🔍 Google | [API Reference](API_REFERENCE.md#google-client), [Special Blocks](SPECIAL_BLOCKS_GUIDE.md#google-special-blocks) |
 | 🔍 Yandex | [API Reference](API_REFERENCE.md#yandex-client), [Special Blocks](SPECIAL_BLOCKS_GUIDE.md#yandex-special-blocks) |
+| 📊 Yandex Wordstat | [API Reference](API_REFERENCE.md#asyncwordstatclient), [Wordstat Guide](WORDSTAT_GUIDE.md) |
 | ⚡ Асинхронные клиенты | [API Reference](API_REFERENCE.md#асинхронные-клиенты), [Advanced Usage](ADVANCED_USAGE.md#асинхронный-массовый-поиск) |
 
 ### По типам поиска
@@ -89,6 +92,7 @@ docs/
 | 🗺️ Карты | [API Reference](API_REFERENCE.md#googlemaps), [Validators](VALIDATORS_REFERENCE.md#validate_coordscoords-coords---bool) |
 | 📢 Реклама | [API Reference](API_REFERENCE.md#googleads), [Formatters](FORMATTERS_REFERENCE.md#format_ads_responseresponse-adsresponse---dictstr-any) |
 | 🧩 Специальные блоки | [Special Blocks Guide](SPECIAL_BLOCKS_GUIDE.md) |
+| 📊 Частотность запросов (Wordstat) | [Wordstat Guide](WORDSTAT_GUIDE.md), [API Reference](API_REFERENCE.md#asyncwordstatclient) |
 
 ## 🎯 Рекомендуемый путь изучения
 

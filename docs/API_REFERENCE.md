@@ -7,6 +7,7 @@
 1. [Асинхронные клиенты](#асинхронные-клиенты)
    - [AsyncGoogleClient](#asyncgoogleclient)
    - [AsyncYandexClient](#asyncyandexclient)
+   - [AsyncWordstatClient](#asyncwordstatclient)
 2. [Типы данных](#типы-данных)
 3. [Исключения](#исключения)
 4. [Утилиты](#утилиты)
@@ -247,6 +248,149 @@ async with AsyncYandexClient(user_id=123, api_key="key") as client:
 
 ---
 
+### AsyncWordstatClient
+
+Асинхронный клиент для работы с Yandex Wordstat API через XMLRiver.
+
+#### Инициализация
+
+```python
+from xmlriver_pro import AsyncWordstatClient
+
+async with AsyncWordstatClient(
+    user_id=123,
+    api_key="your_key",
+    timeout=60,
+    max_retries=3,
+    retry_delay=1.0
+) as client:
+    # Ваш код
+    pass
+```
+
+**Параметры:** аналогичны AsyncGoogleClient
+
+#### Методы
+
+##### `get_words(query, **kwargs)`
+
+Асинхронное получение топов запросов (associations и popular).
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    result = await client.get_words(
+        query="купить телефон",
+        regions=213,  # Москва
+        device="desktop",
+        limit=100
+    )
+    
+    print(f"Associations: {len(result.associations)}")
+    print(f"Popular: {len(result.popular)}")
+    
+    for kw in result.associations[:5]:
+        print(f"{kw.text}: {kw.value}")
+```
+
+**Параметры:**
+- `query` (str): Поисковый запрос
+- `regions` (int | list, optional): ID региона/регионов Яндекса
+- `device` (str, optional): Тип устройства ("desktop", "phone", "tablet")
+- `limit` (int, optional): Количество результатов
+
+**Возвращает:** `WordstatResponse`
+
+##### `get_history(query, **kwargs)`
+
+Асинхронное получение динамики частотности запроса.
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    history = await client.get_history(
+        query="купить телефон",
+        regions=213,
+        device="desktop",
+        period="month",
+        start="01.01.2024",
+        end="31.03.2024"
+    )
+    
+    print(f"Total frequency: {history.total_value}")
+    for point in history.history:
+        print(f"{point.date}: {point.absolute_value}")
+```
+
+**Параметры:**
+- `query` (str): Поисковый запрос
+- `regions` (int | list, optional): ID региона/регионов Яндекса
+- `device` (str, optional): Тип устройства
+- `period` (str, optional): Период группировки ("month", "week", "day")
+- `start` (str, optional): Дата начала (dd.mm.yyyy)
+- `end` (str, optional): Дата окончания (dd.mm.yyyy)
+
+**Возвращает:** `WordstatHistoryResponse`
+
+##### `get_frequency(query, **kwargs)`
+
+Асинхронное получение общей частотности запроса (быстрый метод).
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    frequency = await client.get_frequency(
+        query="купить телефон",
+        regions=213,
+        device="desktop"
+    )
+    print(f"Frequency: {frequency}")
+```
+
+**Параметры:**
+- `query` (str): Поисковый запрос
+- `regions` (int | list, optional): ID региона/регионов Яндекса
+- `device` (str, optional): Тип устройства
+
+**Возвращает:** `int` - частотность запроса
+
+##### `get_balance()`
+
+Асинхронное получение баланса и стоимости запросов.
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    balance = await client.get_balance()
+    print(f"Balance: {balance.balance}")
+```
+
+**Возвращает:** `BalanceResponse`
+
+#### Операторы Wordstat
+
+AsyncWordstatClient поддерживает все операторы Yandex Wordstat:
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    # Точная форма слова
+    freq = await client.get_frequency('"купить телефон"')
+    
+    # Исключение слова
+    freq = await client.get_frequency('купить телефон -айфон')
+    
+    # ИЛИ
+    freq = await client.get_frequency('купить (телефон | смартфон)')
+```
+
+**Поддерживаемые операторы:**
+- `"слово"` - точная форма слова
+- `[слово]` - фиксация порядка слов
+- `!слово` - точное вхождение
+- `-слово` - исключение слова
+- `слово1 | слово2` - ИЛИ
+- `+слово` - обязательное слово
+
+**См. также:** [WORDSTAT_GUIDE.md](WORDSTAT_GUIDE.md) - полное руководство по Wordstat API
+
+---
+
 ## Типы данных
 
 ### SearchResponse
@@ -316,6 +460,44 @@ async with AsyncYandexClient(user_id=123, api_key="key") as client:
 - `ads_url` (str): Рекламный URL
 - `title` (str): Заголовок
 - `snippet` (str): Описание
+
+### WordstatResponse
+
+Ответ Wordstat API с топами запросов.
+
+**Атрибуты:**
+- `query` (str): Исходный запрос
+- `associations` (List[WordstatKeyword]): Список похожих запросов
+- `popular` (List[WordstatKeyword]): Список популярных запросов
+
+### WordstatHistoryResponse
+
+Ответ Wordstat API с динамикой запроса.
+
+**Атрибуты:**
+- `query` (str): Исходный запрос
+- `total_value` (int): Общая частотность
+- `history` (List[WordstatHistoryPoint]): История по периодам
+- `associations` (List[WordstatKeyword]): Список похожих запросов
+- `popular` (List[WordstatKeyword]): Список популярных запросов
+
+### WordstatKeyword
+
+Ключевое слово из Wordstat.
+
+**Атрибуты:**
+- `text` (str): Текст запроса
+- `value` (int): Частотность запроса
+- `is_association` (bool): Является ли похожим запросом (True) или популярным (False)
+
+### WordstatHistoryPoint
+
+Точка в динамике Wordstat.
+
+**Атрибуты:**
+- `date` (str): Дата в формате "dd.mm.yyyy"
+- `absolute_value` (int): Абсолютное значение частотности
+- `relative_value` (float, optional): Относительное значение частотности
 
 ### Перечисления (Enums)
 

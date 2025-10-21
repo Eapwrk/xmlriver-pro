@@ -9,6 +9,7 @@
 - [Массовый поиск](#массовый-поиск)
 - [Мониторинг позиций](#мониторинг-позиций)
 - [Анализ конкурентов](#анализ-конкурентов)
+- [Анализ семантического ядра с Wordstat](#анализ-семантического-ядра-с-wordstat)
 - [Экспорт результатов](#экспорт-результатов)
 - [Кэширование результатов](#кэширование-результатов)
 - [Пакетная обработка](#пакетная-обработка)
@@ -250,6 +251,343 @@ async def main():
 
 asyncio.run(main())
 ```
+
+## Анализ семантического ядра с Wordstat
+
+### Сбор семантического ядра
+
+```python
+import asyncio
+from xmlriver_pro import AsyncWordstatClient
+from typing import Set, List
+import json
+
+async def collect_semantic_core(
+    seed_keywords: List[str],
+    region: int = 213,  # Москва
+    device: str = "desktop",
+    min_frequency: int = 100,
+    depth: int = 2
+) -> dict:
+    """
+    Сбор семантического ядра на основе seed keywords
+    
+    Args:
+        seed_keywords: Начальные ключевые слова
+        region: ID региона Яндекса
+        device: Тип устройства
+        min_frequency: Минимальная частотность запроса
+        depth: Глубина расширения (сколько уровней ассоциаций)
+    """
+    all_keywords = {}
+    processed = set()
+    to_process = set(seed_keywords)
+    
+    async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+        for level in range(depth):
+            print(f"\n📊 Уровень {level + 1}/{depth}")
+            print(f"Обработка {len(to_process)} запросов...")
+            
+            next_level = set()
+            
+            for keyword in to_process:
+                if keyword in processed:
+                    continue
+                    
+                try:
+                    # Получаем частотность
+                    frequency = await client.get_frequency(
+                        keyword,
+                        regions=region,
+                        device=device
+                    )
+                    
+                    # Фильтруем по минимальной частотности
+                    if frequency < min_frequency:
+                        processed.add(keyword)
+                        continue
+                    
+                    # Получаем ассоциации
+                    result = await client.get_words(
+                        keyword,
+                        regions=region,
+                        device=device
+                    )
+                    
+                    # Сохраняем результаты
+                    all_keywords[keyword] = {
+                        "frequency": frequency,
+                        "level": level + 1,
+                        "associations": [
+                            {
+                                "text": kw.text,
+                                "value": kw.value
+                            }
+                            for kw in result.associations
+                            if kw.value >= min_frequency
+                        ][:10]  # Топ-10
+                    }
+                    
+                    # Добавляем ассоциации для следующего уровня
+                    for kw in result.associations[:5]:  # Топ-5 для расширения
+                        if kw.value >= min_frequency and kw.text not in processed:
+                            next_level.add(kw.text)
+                    
+                    processed.add(keyword)
+                    print(f"✅ {keyword}: {frequency:,} запросов")
+                    
+                    await asyncio.sleep(0.5)  # Rate limiting
+                    
+                except Exception as e:
+                    print(f"❌ {keyword}: {e}")
+                    processed.add(keyword)
+            
+            to_process = next_level
+            
+            if not to_process:
+                print("Больше нет запросов для расширения")
+                break
+    
+    return all_keywords
+
+# Использование
+async def main():
+    seed_keywords = ["купить телефон", "смартфон"]
+    
+    semantic_core = await collect_semantic_core(
+        seed_keywords=seed_keywords,
+        region=213,  # Москва
+        min_frequency=1000,
+        depth=2
+    )
+    
+    # Сохраняем результаты
+    with open("semantic_core.json", "w", encoding="utf-8") as f:
+        json.dump(semantic_core, f, ensure_ascii=False, indent=2)
+    
+    print(f"\n📈 Собрано {len(semantic_core)} запросов")
+    
+    # Статистика по уровням
+    by_level = {}
+    total_freq = 0
+    for kw, data in semantic_core.items():
+        level = data["level"]
+        by_level[level] = by_level.get(level, 0) + 1
+        total_freq += data["frequency"]
+    
+    print("\n📊 Статистика:")
+    for level, count in sorted(by_level.items()):
+        print(f"  Уровень {level}: {count} запросов")
+    print(f"  Суммарная частотность: {total_freq:,}")
+
+asyncio.run(main())
+```
+
+### Кластеризация запросов
+
+```python
+import asyncio
+from xmlriver_pro import AsyncWordstatClient
+from typing import List, Dict
+import json
+
+async def cluster_keywords(keywords: List[str], region: int = 213) -> Dict:
+    """
+    Кластеризация запросов на основе пересечения ассоциаций
+    """
+    keyword_data = {}
+    
+    async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+        print("📊 Сбор данных по запросам...")
+        
+        for keyword in keywords:
+            try:
+                result = await client.get_words(keyword, regions=region)
+                frequency = await client.get_frequency(keyword, regions=region)
+                
+                keyword_data[keyword] = {
+                    "frequency": frequency,
+                    "associations": set(kw.text for kw in result.associations[:20])
+                }
+                
+                print(f"✅ {keyword}: {frequency:,} запросов")
+                await asyncio.sleep(0.5)
+                
+            except Exception as e:
+                print(f"❌ {keyword}: {e}")
+    
+    # Кластеризация
+    clusters = []
+    processed = set()
+    
+    for kw1 in keywords:
+        if kw1 in processed or kw1 not in keyword_data:
+            continue
+        
+        cluster = {
+            "core_keyword": kw1,
+            "frequency": keyword_data[kw1]["frequency"],
+            "related": []
+        }
+        
+        # Ищем похожие запросы
+        for kw2 in keywords:
+            if kw2 == kw1 or kw2 in processed or kw2 not in keyword_data:
+                continue
+            
+            # Вычисляем пересечение ассоциаций
+            intersection = keyword_data[kw1]["associations"] & keyword_data[kw2]["associations"]
+            similarity = len(intersection) / min(
+                len(keyword_data[kw1]["associations"]),
+                len(keyword_data[kw2]["associations"])
+            ) if keyword_data[kw1]["associations"] and keyword_data[kw2]["associations"] else 0
+            
+            # Если сходство > 30%, добавляем в кластер
+            if similarity > 0.3:
+                cluster["related"].append({
+                    "keyword": kw2,
+                    "frequency": keyword_data[kw2]["frequency"],
+                    "similarity": round(similarity * 100, 1)
+                })
+                processed.add(kw2)
+        
+        clusters.append(cluster)
+        processed.add(kw1)
+    
+    return {
+        "clusters": sorted(clusters, key=lambda x: x["frequency"], reverse=True),
+        "total_keywords": len(keywords),
+        "clusters_count": len(clusters)
+    }
+
+# Использование
+async def main():
+    keywords = [
+        "купить телефон",
+        "смартфон цена",
+        "телефон недорого",
+        "мобильный телефон",
+        "купить смартфон",
+        "айфон цена",
+        "samsung телефон",
+    ]
+    
+    result = await cluster_keywords(keywords, region=213)
+    
+    # Сохраняем результаты
+    with open("keyword_clusters.json", "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+    
+    print(f"\n📊 Кластеризация завершена:")
+    print(f"  Всего запросов: {result['total_keywords']}")
+    print(f"  Создано кластеров: {result['clusters_count']}")
+    
+    print("\n🔍 Топ-3 кластера:")
+    for i, cluster in enumerate(result["clusters"][:3], 1):
+        print(f"\n{i}. {cluster['core_keyword']} ({cluster['frequency']:,} запросов)")
+        for rel in cluster["related"][:3]:
+            print(f"   └─ {rel['keyword']} ({rel['similarity']}% схожесть)")
+
+asyncio.run(main())
+```
+
+### Анализ сезонности
+
+```python
+import asyncio
+from xmlriver_pro import AsyncWordstatClient
+from datetime import datetime, timedelta
+import json
+
+async def analyze_seasonality(
+    keywords: List[str],
+    region: int = 213,
+    months: int = 12
+) -> Dict:
+    """
+    Анализ сезонности запросов за последние N месяцев
+    """
+    # Вычисляем диапазон дат
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=30 * months)
+    
+    results = {}
+    
+    async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+        print(f"📊 Анализ сезонности за {months} месяцев")
+        print(f"Период: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}\n")
+        
+        for keyword in keywords:
+            try:
+                # Получаем динамику по месяцам
+                history = await client.get_history(
+                    keyword,
+                    regions=region,
+                    period="month",
+                    start=start_date.strftime("%d.%m.%Y"),
+                    end=end_date.strftime("%d.%m.%Y")
+                )
+                
+                # Анализируем данные
+                values = [point.absolute_value for point in history.history]
+                avg_value = sum(values) / len(values) if values else 0
+                max_value = max(values) if values else 0
+                min_value = min(values) if values else 0
+                
+                # Определяем пиковый месяц
+                peak_month = max(history.history, key=lambda x: x.absolute_value) if history.history else None
+                
+                results[keyword] = {
+                    "total_frequency": history.total_value,
+                    "average_monthly": int(avg_value),
+                    "max_monthly": max_value,
+                    "min_monthly": min_value,
+                    "peak_month": peak_month.date if peak_month else None,
+                    "volatility": round((max_value - min_value) / avg_value * 100, 1) if avg_value else 0,
+                    "history": [
+                        {"date": point.date, "value": point.absolute_value}
+                        for point in history.history
+                    ]
+                }
+                
+                print(f"✅ {keyword}:")
+                print(f"   Средняя частотность: {int(avg_value):,}/мес")
+                print(f"   Волатильность: {results[keyword]['volatility']}%")
+                if peak_month:
+                    print(f"   Пик: {peak_month.date} ({peak_month.absolute_value:,})")
+                
+                await asyncio.sleep(0.5)
+                
+            except Exception as e:
+                print(f"❌ {keyword}: {e}")
+                results[keyword] = {"error": str(e)}
+    
+    return results
+
+# Использование
+async def main():
+    keywords = ["купить елку", "кондиционер", "зимняя резина"]
+    
+    seasonality = await analyze_seasonality(keywords, months=12)
+    
+    # Сохраняем результаты
+    with open("seasonality_analysis.json", "w", encoding="utf-8") as f:
+        json.dump(seasonality, f, ensure_ascii=False, indent=2)
+    
+    print("\n📈 Анализ завершен!")
+    print("\n🔥 Самые волатильные запросы:")
+    volatile = sorted(
+        [(k, v["volatility"]) for k, v in seasonality.items() if "volatility" in v],
+        key=lambda x: x[1],
+        reverse=True
+    )
+    for keyword, vol in volatile[:5]:
+        print(f"  {keyword}: {vol}%")
+
+asyncio.run(main())
+```
+
+**См. также:** [WORDSTAT_GUIDE.md](WORDSTAT_GUIDE.md) - полное руководство по Wordstat API
 
 ## Экспорт результатов
 
