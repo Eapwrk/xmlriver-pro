@@ -200,16 +200,28 @@ async with AsyncWordstatClient(user_id=123, api_key="key") as client:
 ```python
 # Популярные регионы
 REGIONS = {
-    "Россия": 225,
-    "Москва": 213,
-    "Санкт-Петербург": 2,
+    "Все регионы": None,              # 180,141 запросов
+    "Москва и область": 1,             # 37,187 запросов
+    "Санкт-Петербург": 2,              # 12,218 запросов
+    "Москва (город)": 213,             # 23,569 запросов
+    "Россия": 225,                     # 160,710 запросов
     "Киев": 143,
     "Минск": 157,
 }
 
 async with AsyncWordstatClient(user_id=123, api_key="key") as client:
-    result = await client.get_words("купить телефон", regions=REGIONS["Москва"])
+    # Москва (только город)
+    result = await client.get_words("купить телефон", regions=213)
+    
+    # Москва и Московская область
+    result = await client.get_words("купить телефон", regions=1)
 ```
+
+**Важно:**
+- `regions=213` - только город Москва (меньшая частотность)
+- `regions=1` - Москва + Московская область (больше частотность)
+- `regions=225` - вся Россия
+- `regions=None` - все регионы (включая другие страны)
 
 Полный список регионов: [Яндекс.Регионы](https://tech.yandex.ru/xml/doc/dg/reference/regions-docpage/)
 
