@@ -31,11 +31,11 @@
 [![GitHub issues](https://img.shields.io/badge/github-issues-red?style=social)](https://github.com/Eapwrk/xmlriver-pro/issues)
 
 ```
-__  ____  __ _     ____  _                  ____            
-\ \/ /  \/  | |   |  _ \(_)_   _____ _ __  |  _ \ _ __ ___  
- \  /| |\/| | |   | |_) | \ \ / / _ \ '__| | |_) | '__/ _ \ 
+__  ____  __ _     ____  _                  ____
+\ \/ /  \/  | |   |  _ \(_)_   _____ _ __  |  _ \ _ __ ___
+ \  /| |\/| | |   | |_) | \ \ / / _ \ '__| | |_) | '__/ _ \
  /  \| |  | | |___|  _ <| |\ V /  __/ |    |  __/| | | (_) |
-/_/\_\_|  |_|_____|_| \_\_| \_/ \___|_|    |_|   |_|  \___/ 
+/_/\_\_|  |_|_____|_| \_\_| \_/ \___|_|    |_|   |_|  \___/
 ```
 
 **Professional Python client for XMLRiver API with full coverage**
@@ -70,7 +70,7 @@ XMLRiver Pro — это **профессиональная** Python библио
 
 **Поддерживает все типы поиска:**
 - 🔍 Органический поиск
-- 📰 Новости с фильтрами времени  
+- 📰 Новости с фильтрами времени
 - 🖼️ Изображения (размер, цвет, тип)
 - 🗺️ Карты с координатами
 - 📢 Рекламные блоки
@@ -143,7 +143,7 @@ async def main():
     async with AsyncGoogleClient(user_id=123, api_key="your_key") as google:
         results = await google.search("python programming")
         print(f"Найдено: {results.total_results} результатов")
-    
+
     # Yandex асинхронный поиск
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
         results = await yandex.search("программирование python")
@@ -164,7 +164,7 @@ async def main():
         results = await google.search_news("python", time_filter=TimeFilter.LAST_WEEK)
         for news in results.results:
             print(f"{news.title}: {news.url}")
-    
+
     # Yandex новости
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
         results = await yandex.search_news("python")
@@ -217,7 +217,7 @@ async def main():
         results = await google.get_ads("python programming")
         for ad in results.results:
             print(f"{ad.title}: {ad.url}")
-    
+
     # Yandex реклама
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
         results = await yandex.get_ads("программирование python")
@@ -239,11 +239,11 @@ async def main():
         result = await client.get_words("python")
         print(f"Associations: {len(result.associations)}")
         print(f"Popular: {len(result.popular)}")
-        
+
         # Получение динамики
         history = await client.get_history("python", period="month")
         print(f"Total frequency: {history.total_value}")
-        
+
         # Получение частотности
         frequency = await client.get_frequency("python")
         print(f"Frequency: {frequency}")
@@ -350,7 +350,7 @@ formatted_ads = format_ads_response(ads_response)
 
 ```python
 from xmlriver_pro.core.types import (
-    SearchResult, NewsResult, ImageResult, MapResult, 
+    SearchResult, NewsResult, ImageResult, MapResult,
     AdResult, AdsResponse, SearchResponse
 )
 
@@ -430,7 +430,7 @@ import asyncio
 import logging
 from xmlriver_pro import AsyncGoogleClient
 from xmlriver_pro.core import (
-    XMLRiverError, AuthenticationError, RateLimitError, 
+    XMLRiverError, AuthenticationError, RateLimitError,
     NoResultsError, NetworkError, ValidationError,
     InsufficientFundsError, ServiceUnavailableError
 )
@@ -477,11 +477,11 @@ async def main():
         # Получение баланса (один на весь аккаунт)
         balance = await google.get_balance()
         print(f"Баланс: {balance} руб.")
-        
+
         # Получение стоимости Google запросов
         google_cost = await google.get_cost()
         print(f"Стоимость Google: {google_cost} руб/1000 запросов")
-    
+
     async with AsyncYandexClient(user_id=123, api_key="your_key") as yandex:
         # Получение стоимости Yandex запросов (разная для каждой системы)
         yandex_cost = await yandex.get_cost()

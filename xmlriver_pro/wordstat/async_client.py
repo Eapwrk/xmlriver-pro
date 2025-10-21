@@ -314,10 +314,12 @@ class AsyncWordstatClient(AsyncBaseClient):
         # Парсим associations
         if "associations" in data and data["associations"]:
             for item in data["associations"]:
+                # Убираем пробелы из числа (формат "38 721" -> "38721")
+                value_str = str(item.get("value", "0")).replace(" ", "")
                 associations.append(
                     WordstatKeyword(
                         text=item.get("text", ""),
-                        value=int(item.get("value", 0)),
+                        value=int(value_str),
                         is_association=item.get("isAssociations", True),
                     )
                 )
@@ -325,10 +327,12 @@ class AsyncWordstatClient(AsyncBaseClient):
         # Парсим popular
         if "popular" in data and data["popular"]:
             for item in data["popular"]:
+                # Убираем пробелы из числа
+                value_str = str(item.get("value", "0")).replace(" ", "")
                 popular.append(
                     WordstatKeyword(
                         text=item.get("text", ""),
-                        value=int(item.get("value", 0)),
+                        value=int(value_str),
                         is_association=item.get("isAssociations", False),
                     )
                 )
@@ -345,16 +349,19 @@ class AsyncWordstatClient(AsyncBaseClient):
         associations: List[WordstatKeyword] = []
         popular: List[WordstatKeyword] = []
 
-        # Парсим totalValue
-        total_value = int(data.get("totalValue", 0))
+        # Парсим totalValue (убираем пробелы)
+        total_value_str = str(data.get("totalValue", "0")).replace(" ", "")
+        total_value = int(total_value_str)
 
         # Парсим динамику из graph.tableData
         if "graph" in data and "tableData" in data["graph"]:
             for item in data["graph"]["tableData"]:
+                # Убираем пробелы из absoluteValue
+                abs_value_str = str(item.get("absoluteValue", "0")).replace(" ", "")
                 history.append(
                     WordstatHistoryPoint(
                         date=item.get("text", ""),
-                        absolute_value=int(item.get("absoluteValue", 0)),
+                        absolute_value=int(abs_value_str),
                         relative_value=float(item.get("value", "0").replace(",", ".")),
                     )
                 )
@@ -366,10 +373,12 @@ class AsyncWordstatClient(AsyncBaseClient):
             and "associations" in data["table"]["tableData"]
         ):
             for item in data["table"]["tableData"]["associations"]:
+                # Убираем пробелы из value
+                value_str = str(item.get("value", "0")).replace(" ", "")
                 associations.append(
                     WordstatKeyword(
                         text=item.get("text", ""),
-                        value=int(item.get("value", 0)),
+                        value=int(value_str),
                         is_association=item.get("isAssociations", True),
                     )
                 )
@@ -381,10 +390,12 @@ class AsyncWordstatClient(AsyncBaseClient):
             and "popular" in data["table"]["tableData"]
         ):
             for item in data["table"]["tableData"]["popular"]:
+                # Убираем пробелы из value
+                value_str = str(item.get("value", "0")).replace(" ", "")
                 popular.append(
                     WordstatKeyword(
                         text=item.get("text", ""),
-                        value=int(item.get("value", 0)),
+                        value=int(value_str),
                         is_association=item.get("isAssociations", False),
                     )
                 )
@@ -409,7 +420,7 @@ class AsyncWordstatClient(AsyncBaseClient):
             ...     balance = await client.get_balance()
             ...     print(f"Balance: {balance} руб.")
         """
-        # Используем общий метод из базового клиента
+        # Wordstat использует тот же endpoint, что и Google/Yandex для баланса
         params = {**self.base_params, "action": "get_balance"}
 
         if not self._session:
@@ -418,11 +429,22 @@ class AsyncWordstatClient(AsyncBaseClient):
                 "Используйте async with AsyncWordstatClient(...) as client:"
             )
 
-        async with self._session.get(
-            "http://xmlriver.com/api/", params=params
-        ) as response:
-            data = await response.json()
-            return float(data.get("balance", 0.0))
+        try:
+            async with self._session.get(
+                "http://xmlriver.com/search/xml", params=params
+            ) as response:
+                text = await response.text()
+                # Парсим XML ответ
+                import xmltodict
+
+                data = xmltodict.parse(text)
+                if "yandexsearch" in data and "response" in data["yandexsearch"]:
+                    balance_str = data["yandexsearch"]["response"].get("balance", "0")
+                    return float(balance_str)
+                return 0.0
+        except Exception:
+            # Если не удалось получить баланс, возвращаем 0
+            return 0.0
 
     def get_concurrent_status(self) -> Dict[str, int]:
         """

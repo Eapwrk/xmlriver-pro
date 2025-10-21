@@ -94,7 +94,7 @@ __email__ = "support@xmlriver.com"
             results = await yandex.search("программирование на python")
             for result in results.results:
                 print(f"{result.title}: {result.url}")
-        
+
         # Wordstat
         async with AsyncWordstatClient(user_id=123, api_key="your_key") as wordstat:
             result = await wordstat.get_words("python")
