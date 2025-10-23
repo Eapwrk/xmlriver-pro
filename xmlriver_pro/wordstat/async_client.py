@@ -422,27 +422,20 @@ class AsyncWordstatClient(AsyncBaseClient):
             ...     balance = await client.get_balance()
             ...     print(f"Баланс: {balance} руб.")
         """
-        params = {**self.base_params, "action": "get_balance"}
-
         if not self._session:
             raise RuntimeError(
                 "Session не инициализирована. "
                 "Используйте async with AsyncWordstatClient(...) as client:"
             )
 
-        try:
-            async with self._session.get(
-                "http://xmlriver.com/search/xml", params=params
-            ) as response:
-                text = await response.text()
-                import xmltodict
+        params = {"user": self.user_id, "key": self.api_key}
+        url = "http://xmlriver.com/api/get_balance/"
 
-                data = xmltodict.parse(text)
-                if "yandexsearch" in data and "response" in data["yandexsearch"]:
-                    balance_str = data["yandexsearch"]["response"].get("balance", "0")
-                    return float(balance_str)
-                return 0.0
-        except Exception:
+        try:
+            async with self._session.get(url, params=params) as response:
+                text = await response.text()
+                return float(text.strip())
+        except (ValueError, Exception):
             return 0.0
 
     async def get_cost(self) -> float:
@@ -459,27 +452,20 @@ class AsyncWordstatClient(AsyncBaseClient):
             ...     cost = await client.get_cost()
             ...     print(f"Стоимость Wordstat: {cost} руб/1000 запросов")
         """
-        params = {**self.base_params, "action": "get_cost", "system": "wordstat"}
-
         if not self._session:
             raise RuntimeError(
                 "Session не инициализирована. "
                 "Используйте async with AsyncWordstatClient(...) as client:"
             )
 
-        try:
-            async with self._session.get(
-                "http://xmlriver.com/search/xml", params=params
-            ) as response:
-                text = await response.text()
-                import xmltodict
+        params = {"user": self.user_id, "key": self.api_key}
+        url = "http://xmlriver.com/api/get_cost/wordstat/"
 
-                data = xmltodict.parse(text)
-                if "yandexsearch" in data and "response" in data["yandexsearch"]:
-                    cost_str = data["yandexsearch"]["response"].get("cost", "0")
-                    return float(cost_str)
-                return 0.0
-        except Exception:
+        try:
+            async with self._session.get(url, params=params) as response:
+                text = await response.text()
+                return float(text.strip())
+        except (ValueError, Exception):
             return 0.0
 
     def get_concurrent_status(self) -> Dict[str, int]:
