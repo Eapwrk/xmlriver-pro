@@ -68,7 +68,7 @@ asyncio.run(main())
 4. **Проверьте баланс:**
    ```python
    try:
-       balance = client.get_balance()
+       balance = await client.get_balance()
        print(f"Баланс: {balance}")
    except AuthenticationError:
        print("Проблема с аутентификацией")
@@ -91,7 +91,7 @@ except InsufficientFundsError as e:
 
 1. **Проверьте баланс:**
    ```python
-   balance = client.get_balance()
+   balance = await client.get_balance()
    print(f"Текущий баланс: {balance}")
 
    if balance <= 0:
@@ -100,7 +100,7 @@ except InsufficientFundsError as e:
 
 2. **Проверьте стоимость запросов:**
    ```python
-   google_cost = client.get_cost()
+   google_cost = await client.get_cost()
    print(f"Стоимость Google запроса: {google_cost}")
    ```
 
@@ -314,11 +314,11 @@ except ExpatError as e:
 2. **Обработка некорректных ответов:**
    ```python
    try:
-       results = client.search("python")
+       results = await client.search("python")
    except Exception as e:
        print(f"Ошибка: {e}")
        # Проверьте баланс и лимиты
-       balance = client.get_balance()
+       balance = await client.get_balance()
        print(f"Баланс: {balance}")
    ```
 
@@ -529,11 +529,11 @@ async with AsyncGoogleClient(user_id=123, api_key="key") as client:
 ### Проверка статуса клиента
 
 ```python
-def debug_client_status(client):
+async def debug_client_status(client):
     """Отладочная информация о клиенте"""
     try:
-        balance = client.get_balance()
-        cost = client.get_cost()
+        balance = await client.get_balance()
+        cost = await client.get_cost()
         limits = client.get_api_limits()
 
         print("=== Статус клиента ===")

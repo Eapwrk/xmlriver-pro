@@ -162,6 +162,34 @@ async with AsyncGoogleClient(user_id=123, api_key="key") as client:
 
 **Возвращает:** `SearchResponse`
 
+##### `get_balance()`
+
+Асинхронное получение текущего баланса счета XMLRiver.
+
+Баланс единый для всего аккаунта (Google, Yandex, Wordstat).
+
+```python
+async with AsyncGoogleClient(user_id=123, api_key="key") as client:
+    balance = await client.get_balance()
+    print(f"Баланс: {balance:.2f} руб.")
+```
+
+**Возвращает:** `float` - баланс в рублях
+
+##### `get_cost()`
+
+Асинхронное получение стоимости запросов для Google.
+
+Стоимость зависит от системы поиска (Google/Yandex/Wordstat).
+
+```python
+async with AsyncGoogleClient(user_id=123, api_key="key") as client:
+    cost = await client.get_cost()
+    print(f"Стоимость: {cost:.2f} руб/1000 запросов")
+```
+
+**Возвращает:** `float` - стоимость за 1000 запросов в рублях
+
 ---
 
 ### AsyncYandexClient
@@ -245,6 +273,34 @@ async with AsyncYandexClient(user_id=123, api_key="key") as client:
 ```
 
 **Возвращает:** `SearchResponse`
+
+##### `get_balance()`
+
+Асинхронное получение текущего баланса счета XMLRiver.
+
+Баланс единый для всего аккаунта (Google, Yandex, Wordstat).
+
+```python
+async with AsyncYandexClient(user_id=123, api_key="key") as client:
+    balance = await client.get_balance()
+    print(f"Баланс: {balance:.2f} руб.")
+```
+
+**Возвращает:** `float` - баланс в рублях
+
+##### `get_cost()`
+
+Асинхронное получение стоимости запросов для Yandex.
+
+Стоимость зависит от системы поиска (Google/Yandex/Wordstat).
+
+```python
+async with AsyncYandexClient(user_id=123, api_key="key") as client:
+    cost = await client.get_cost()
+    print(f"Стоимость: {cost:.2f} руб/1000 запросов")
+```
+
+**Возвращает:** `float` - стоимость за 1000 запросов в рублях
 
 ---
 
@@ -353,15 +409,31 @@ async with AsyncWordstatClient(user_id=123, api_key="key") as client:
 
 ##### `get_balance()`
 
-Асинхронное получение баланса и стоимости запросов.
+Асинхронное получение текущего баланса счета XMLRiver.
+
+Баланс единый для всего аккаунта (Google, Yandex, Wordstat).
 
 ```python
 async with AsyncWordstatClient(user_id=123, api_key="key") as client:
     balance = await client.get_balance()
-    print(f"Balance: {balance.balance}")
+    print(f"Баланс: {balance:.2f} руб.")
 ```
 
-**Возвращает:** `BalanceResponse`
+**Возвращает:** `float` - баланс в рублях
+
+##### `get_cost()`
+
+Асинхронное получение стоимости запросов для Wordstat.
+
+Стоимость зависит от системы поиска (Google/Yandex/Wordstat).
+
+```python
+async with AsyncWordstatClient(user_id=123, api_key="key") as client:
+    cost = await client.get_cost()
+    print(f"Стоимость: {cost:.2f} руб/1000 запросов")
+```
+
+**Возвращает:** `float` - стоимость за 1000 запросов в рублях
 
 #### Операторы Wordstat
 

@@ -88,9 +88,15 @@ XMLRIVER_API_KEY=your_api_key_here
 Перед запуском тестов убедитесь что у вас достаточно средств:
 
 ```python
-from xmlriver_pro.google import GoogleClient
-client = GoogleClient(user_id=YOUR_ID, api_key="YOUR_KEY")
-print(f"Баланс: ${client.get_balance():.2f}")
+import asyncio
+from xmlriver_pro import AsyncGoogleClient
+
+async def check_balance():
+    async with AsyncGoogleClient(user_id=YOUR_ID, api_key="YOUR_KEY") as client:
+        balance = await client.get_balance()
+        print(f"Баланс: {balance:.2f} руб.")
+
+asyncio.run(check_balance())
 ```
 
 ---
