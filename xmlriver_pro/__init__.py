@@ -4,7 +4,7 @@ XMLRiver Pro - Professional Python client for XMLRiver API
 Полнофункциональная асинхронная Python библиотека для работы с API xmlriver.com
 с поддержкой всех типов поиска Google, Yandex и Wordstat.
 
-Version: 2.1.0
+Version: 2.2.0
 """
 
 # Импорт асинхронных клиентов
@@ -62,7 +62,7 @@ from .utils import (
 )
 
 # Версия и метаданные
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __author__ = "XMLRiver Pro Team"
 __email__ = "support@xmlriver.com"
 
