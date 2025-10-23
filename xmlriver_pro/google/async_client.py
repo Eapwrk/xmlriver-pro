@@ -336,6 +336,76 @@ class AsyncGoogleClient(AsyncBaseClient):
 
         return results
 
+    async def get_balance(self) -> float:
+        """
+        Получение текущего баланса счета XMLRiver
+
+        Баланс единый для всего аккаунта (Google, Yandex, Wordstat).
+
+        Returns:
+            float: Баланс в рублях
+
+        Example:
+            >>> async with AsyncGoogleClient(user_id=123, api_key="key") as client:
+            ...     balance = await client.get_balance()
+            ...     print(f"Баланс: {balance} руб.")
+        """
+        params = {**self.base_params, "action": "get_balance"}
+
+        if not self._session:
+            raise RuntimeError(
+                "Session не инициализирована. "
+                "Используйте async with AsyncGoogleClient(...) as client:"
+            )
+
+        try:
+            async with self._session.get(self.BASE_URL, params=params) as response:
+                text = await response.text()
+                import xmltodict
+
+                data = xmltodict.parse(text)
+                if "yandexsearch" in data and "response" in data["yandexsearch"]:
+                    balance_str = data["yandexsearch"]["response"].get("balance", "0")
+                    return float(balance_str)
+                return 0.0
+        except Exception:
+            return 0.0
+
+    async def get_cost(self) -> float:
+        """
+        Получение стоимости запросов для Google
+
+        Стоимость зависит от системы поиска (Google/Yandex имеют разные цены).
+
+        Returns:
+            float: Стоимость за 1000 запросов в рублях
+
+        Example:
+            >>> async with AsyncGoogleClient(user_id=123, api_key="key") as client:
+            ...     cost = await client.get_cost()
+            ...     print(f"Стоимость Google: {cost} руб/1000 запросов")
+        """
+        params = {**self.base_params, "action": "get_cost", "system": "google"}
+
+        if not self._session:
+            raise RuntimeError(
+                "Session не инициализирована. "
+                "Используйте async with AsyncGoogleClient(...) as client:"
+            )
+
+        try:
+            async with self._session.get(self.BASE_URL, params=params) as response:
+                text = await response.text()
+                import xmltodict
+
+                data = xmltodict.parse(text)
+                if "yandexsearch" in data and "response" in data["yandexsearch"]:
+                    cost_str = data["yandexsearch"]["response"].get("cost", "0")
+                    return float(cost_str)
+                return 0.0
+        except Exception:
+            return 0.0
+
     def _create_search_result(
         self, item: Dict[str, Any], search_type: str
     ) -> Optional[SearchResult]:
